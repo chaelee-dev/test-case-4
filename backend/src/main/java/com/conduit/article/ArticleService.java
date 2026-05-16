@@ -72,6 +72,65 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
+    public ArticleDto getBySlug(String slug, Long viewerId) {
+        Article article = articleRepository.findBySlug(slug).orElseThrow(() -> AppException.notFound("article"));
+        return enrich(article, viewerId);
+    }
+
+    @Transactional
+    public ArticleDto update(
+            long actorId,
+            String slug,
+            String title,
+            String description,
+            String body,
+            List<String> tagList) {
+        Article article = articleRepository.findBySlug(slug).orElseThrow(() -> AppException.notFound("article"));
+        if (article.getAuthor().getId() != actorId) {
+            throw AppException.forbidden("article");
+        }
+        boolean anyField =
+                title != null || description != null || body != null || tagList != null;
+        if (!anyField) {
+            throw AppException.validation("article", "at least one field is required");
+        }
+        if (title != null && !title.isBlank() && !title.equals(article.getTitle())) {
+            article.setTitle(title);
+            String base = slugGenerator.slugify(title);
+            String newSlug = base;
+            if (!newSlug.equals(article.getSlug()) && articleRepository.existsBySlug(newSlug)) {
+                newSlug = slugGenerator.withSuffix(base);
+            }
+            article.setSlug(newSlug);
+        }
+        if (description != null && !description.isBlank()) article.setDescription(description);
+        if (body != null && !body.isBlank()) article.setBody(body);
+        if (tagList != null) {
+            List<Tag> tags = tagService.upsertAll(tagList);
+            article.setTags(new LinkedHashSet<>(tags));
+        }
+        return enrich(article, actorId);
+    }
+
+    @Transactional
+    public void delete(long actorId, String slug) {
+        Article article = articleRepository.findBySlug(slug).orElseThrow(() -> AppException.notFound("article"));
+        if (article.getAuthor().getId() != actorId) {
+            throw AppException.forbidden("article");
+        }
+        articleRepository.delete(article);
+    }
+
+    private ArticleDto enrich(Article article, Long viewerId) {
+        boolean favorited =
+                viewerId != null && favoriteRepository.existsByUserAndArticle(viewerId, article.getId());
+        boolean followingAuthor =
+                viewerId != null
+                        && followRepository.existsByFollowerAndFollowee(viewerId, article.getAuthor().getId());
+        return ArticleDto.from(article, favorited, followingAuthor);
+    }
+
+    @Transactional(readOnly = true)
     public ListResult list(String tag, String authorUsername, String favoritedBy, Pagination page, Long viewerId) {
         if (page.isBeyondSafeCeiling()) {
             return new ListResult(List.of(), 0);
