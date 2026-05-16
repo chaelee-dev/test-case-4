@@ -53,4 +53,15 @@ public class ArticleController {
         var result = articleService.list(tag, author, favorited, page, viewerId);
         return ResponseEntity.ok(new ArticlesResponse(result.articles(), result.total()));
     }
+
+    @GetMapping("/feed")
+    public ResponseEntity<ArticlesResponse> feed(
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) Long offset,
+            @AuthenticationPrincipal Long viewerId) {
+        if (viewerId == null) throw AppException.unauthorized("is invalid");
+        var page = Pagination.of(limit, offset);
+        var result = articleService.feed(viewerId, page);
+        return ResponseEntity.ok(new ArticlesResponse(result.articles(), result.total()));
+    }
 }
