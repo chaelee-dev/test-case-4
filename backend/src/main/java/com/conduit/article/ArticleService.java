@@ -153,5 +153,34 @@ public class ArticleService {
         };
     }
 
+    @Transactional(readOnly = true)
+    public ListResult feed(long viewerId, Pagination page) {
+        if (page.isBeyondSafeCeiling()) {
+            return new ListResult(List.of(), 0);
+        }
+        Specification<Article> spec =
+                (root, query, cb) -> {
+                    var followSub = query.subquery(Long.class);
+                    var followRoot =
+                            followSub.from(com.conduit.profile.Follow.class);
+                    followSub.select(followRoot.get("id").get("followeeId"));
+                    followSub.where(cb.equal(followRoot.get("id").get("followerId"), viewerId));
+                    return root.get("author").get("id").in(followSub);
+                };
+        var pageRequest =
+                PageRequest.of(
+                        (int) (page.offset() / Math.max(1, page.limit())),
+                        page.limit(),
+                        Sort.by(Sort.Direction.DESC, "createdAt"));
+        var slice = articleRepository.findAll(spec, pageRequest);
+        long total = articleRepository.count(spec);
+        Set<Long> favoritedIds = favoritedArticleIds(viewerId, slice.toList());
+        List<ArticleDto> dtos =
+                slice.stream()
+                        .map(a -> ArticleDto.from(a, favoritedIds.contains(a.getId()), true))
+                        .toList();
+        return new ListResult(dtos, total);
+    }
+
     public record ListResult(List<ArticleDto> articles, long total) {}
 }
