@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { App } from "@/App";
+import { LoginPage } from "@/pages/login/LoginPage";
+import { RegisterPage } from "@/pages/register/RegisterPage";
 
 function Placeholder({ name }: { name: string }) {
   return <div className="container mx-auto max-w-4xl p-8">{name} page — coming soon</div>;
@@ -11,8 +13,8 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <Placeholder name="Home" /> },
-      { path: "login", element: <Placeholder name="Login" /> },
-      { path: "register", element: <Placeholder name="Register" /> },
+      { path: "login", element: <LoginPage /> },
+      { path: "register", element: <RegisterPage /> },
       { path: "settings", element: <Placeholder name="Settings" /> },
       { path: "editor", element: <Placeholder name="Editor (new)" /> },
       { path: "editor/:slug", element: <Placeholder name="Editor (edit)" /> },
