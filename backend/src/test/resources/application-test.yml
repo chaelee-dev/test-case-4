@@ -5,10 +5,13 @@ spring:
     username: sa
     password:
   flyway:
-    enabled: false
+    enabled: true
+    locations: classpath:db/migrations
+    baseline-on-migrate: true
+    clean-disabled: false
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
