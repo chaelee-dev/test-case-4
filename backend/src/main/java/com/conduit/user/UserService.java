@@ -33,4 +33,13 @@ public class UserService {
         repository.save(user);
         return UserDto.from(user, jwtService.create(user.getId()));
     }
+
+    public UserDto login(String email, String rawPassword) {
+        User user =
+                repository
+                        .findByEmail(email)
+                        .filter(u -> passwordEncoder.matches(rawPassword, u.getPasswordHash()))
+                        .orElseThrow(AppException::invalidCredentials);
+        return UserDto.from(user, jwtService.create(user.getId()));
+    }
 }
