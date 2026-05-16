@@ -1,10 +1,12 @@
 import { Outlet } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth/AuthContext";
+import { Header } from "@/components/header/Header";
 
 export function App() {
   return (
     <AuthProvider>
       <div className="min-h-screen flex flex-col">
+        <Header />
         <main className="flex-1">
           <Outlet />
         </main>
