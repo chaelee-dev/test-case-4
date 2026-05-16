@@ -32,9 +32,9 @@ dependencies {
     // Data JPA (Issue #4)
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
-    // Reserved for I-17+
-    // implementation("org.commonmark:commonmark:0.22.0")
-    // implementation("org.jsoup:jsoup:1.18.1")
+    // Markdown rendering + sanitization (Issue #17)
+    implementation("org.commonmark:commonmark:0.22.0")
+    implementation("org.jsoup:jsoup:1.18.1")
 
     testImplementation("org.springframework.security:spring-security-test")
 
