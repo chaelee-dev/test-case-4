@@ -1,0 +1,54 @@
+name: Nightly Performance
+
+on:
+  schedule:
+    # 18:00 KST = 09:00 UTC daily
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: conduit_dev
+          POSTGRES_USER: conduit
+          POSTGRES_PASSWORD: conduit
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U conduit -d conduit_dev"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
+      - name: Boot backend
+        working-directory: backend
+        env:
+          SPRING_PROFILES_ACTIVE: dev
+          DB_URL: jdbc:postgresql://localhost:5432/conduit_dev
+          DB_USER: conduit
+          DB_PASSWORD: conduit
+          JWT_SECRET: ci_only_change_me_64_bytes_min_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        run: |
+          ./gradlew --no-daemon bootRun &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/api/health > /dev/null && break || sleep 2
+          done
+      - run: k6 run tests/performance/k6/p1-single-user.js
+      - run: k6 run tests/performance/k6/p3-huge-offset.js
