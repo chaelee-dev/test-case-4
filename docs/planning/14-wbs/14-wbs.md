@@ -673,43 +673,43 @@ sprints:
     description: "Auth·User·Profile API 7건 + 응답/에러 표준 + 페이지네이션 validator"
     issues:
       - slug: "I-01-project-bootstrap"
-        title: "I-01 project-bootstrap"
-        labels: ["type:chore", "scope:backend", "P0", "status:todo"]
+        title: "chore(backend): I-01 project bootstrap"
+        labels: ["type:chore", "area:backend", "priority:P0", "status:todo"]
         body_file: "docs/planning/14-wbs/14-wbs.md#issue-i-01-project-bootstrap"
         effort: "1d"
       - slug: "I-02-jwt-and-security-config"
-        title: "I-02 jwt-and-security-config"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-02 jwt and security config"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-01-project-bootstrap"]
       - slug: "I-03-response-envelope-and-error-handling"
-        title: "I-03 response-envelope-and-error-handling"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-03 response envelope and error handling"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-02-jwt-and-security-config"]
       - slug: "I-04-user-domain-and-registration"
-        title: "I-04 user-domain-and-registration"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-04 user domain and registration"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-03-response-envelope-and-error-handling"]
       - slug: "I-05-login-endpoint"
-        title: "I-05 login-endpoint"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-05 login endpoint"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "0.5d"
         blocked_by: ["I-04-user-domain-and-registration"]
       - slug: "I-06-current-user-endpoints"
-        title: "I-06 current-user-endpoints"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-06 current user endpoints"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-05-login-endpoint"]
       - slug: "I-07-profile-and-follow"
-        title: "I-07 profile-and-follow"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-07 profile and follow"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "2d"
         blocked_by: ["I-04-user-domain-and-registration"]
       - slug: "I-08-pagination-validation"
-        title: "I-08 pagination-validation"
-        labels: ["type:feature", "scope:backend", "P1", "status:todo"]
+        title: "feat(backend): I-08 pagination validation"
+        labels: ["type:feature", "area:backend", "priority:P1", "status:todo"]
         effort: "0.5d"
         blocked_by: ["I-03-response-envelope-and-error-handling"]
 
@@ -719,48 +719,48 @@ sprints:
     description: "Article·Tag·Comment·Favorite·Markdown API 9건"
     issues:
       - slug: "I-09-article-domain-and-slug"
-        title: "I-09 article-domain-and-slug"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-09 article domain and slug"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-02-jwt-and-security-config"]
       - slug: "I-10-tag-domain-and-list"
-        title: "I-10 tag-domain-and-list"
-        labels: ["type:feature", "scope:backend", "P1", "status:todo"]
+        title: "feat(backend): I-10 tag domain and list"
+        labels: ["type:feature", "area:backend", "priority:P1", "status:todo"]
         effort: "1d"
         blocked_by: ["I-09-article-domain-and-slug"]
       - slug: "I-11-article-create"
-        title: "I-11 article-create"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-11 article create"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-09-article-domain-and-slug", "I-10-tag-domain-and-list"]
       - slug: "I-12-article-list-and-filter"
-        title: "I-12 article-list-and-filter"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-12 article list and filter"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "2d"
         blocked_by: ["I-09-article-domain-and-slug", "I-08-pagination-validation"]
       - slug: "I-13-article-feed"
-        title: "I-13 article-feed"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-13 article feed"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-09-article-domain-and-slug", "I-07-profile-and-follow"]
       - slug: "I-14-article-detail-update-delete"
-        title: "I-14 article-detail-update-delete"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-14 article detail update delete"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "2d"
         blocked_by: ["I-11-article-create"]
       - slug: "I-15-favorite"
-        title: "I-15 favorite"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-15 favorite"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-09-article-domain-and-slug", "I-12-article-list-and-filter"]
       - slug: "I-16-comment"
-        title: "I-16 comment"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-16 comment"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "2d"
         blocked_by: ["I-09-article-domain-and-slug"]
       - slug: "I-17-markdown-sanitize"
-        title: "I-17 markdown-sanitize"
-        labels: ["type:feature", "scope:backend", "P0", "status:todo"]
+        title: "feat(backend): I-17 markdown sanitize"
+        labels: ["type:feature", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-09-article-domain-and-slug"]
 
@@ -770,47 +770,47 @@ sprints:
     description: "9 페이지 + JWT + 마크다운 + Header/Routes"
     issues:
       - slug: "I-18-frontend-bootstrap"
-        title: "I-18 frontend-bootstrap"
-        labels: ["type:chore", "scope:frontend", "P0", "status:todo"]
+        title: "chore(frontend): I-18 frontend bootstrap"
+        labels: ["type:chore", "area:frontend", "priority:P0", "status:todo"]
         effort: "1d"
       - slug: "I-19-api-client-and-401"
-        title: "I-19 api-client-and-401"
-        labels: ["type:feature", "scope:frontend", "P0", "status:todo"]
+        title: "feat(frontend): I-19 api client and 401"
+        labels: ["type:feature", "area:frontend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-18-frontend-bootstrap"]
       - slug: "I-20-auth-context-and-pages"
-        title: "I-20 auth-context-and-pages"
-        labels: ["type:feature", "scope:frontend", "P0", "status:todo"]
+        title: "feat(frontend): I-20 auth context and pages"
+        labels: ["type:feature", "area:frontend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-19-api-client-and-401"]
       - slug: "I-21-header-and-protected-routes"
-        title: "I-21 header-and-protected-routes"
-        labels: ["type:feature", "scope:frontend", "P0", "status:todo"]
+        title: "feat(frontend): I-21 header and protected routes"
+        labels: ["type:feature", "area:frontend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-20-auth-context-and-pages"]
       - slug: "I-22-settings-page"
-        title: "I-22 settings-page"
-        labels: ["type:feature", "scope:frontend", "P0", "status:todo"]
+        title: "feat(frontend): I-22 settings page"
+        labels: ["type:feature", "area:frontend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-21-header-and-protected-routes"]
       - slug: "I-23-home-page"
-        title: "I-23 home-page"
-        labels: ["type:feature", "scope:frontend", "P0", "status:todo"]
+        title: "feat(frontend): I-23 home page"
+        labels: ["type:feature", "area:frontend", "priority:P0", "status:todo"]
         effort: "2d"
         blocked_by: ["I-21-header-and-protected-routes"]
       - slug: "I-24-editor-page"
-        title: "I-24 editor-page"
-        labels: ["type:feature", "scope:frontend", "P0", "status:todo"]
+        title: "feat(frontend): I-24 editor page"
+        labels: ["type:feature", "area:frontend", "priority:P0", "status:todo"]
         effort: "2d"
         blocked_by: ["I-21-header-and-protected-routes"]
       - slug: "I-25-article-detail-page"
-        title: "I-25 article-detail-page"
-        labels: ["type:feature", "scope:frontend", "P0", "status:todo"]
+        title: "feat(frontend): I-25 article detail page"
+        labels: ["type:feature", "area:frontend", "priority:P0", "status:todo"]
         effort: "2d"
         blocked_by: ["I-21-header-and-protected-routes", "I-17-markdown-sanitize"]
       - slug: "I-26-profile-page"
-        title: "I-26 profile-page"
-        labels: ["type:feature", "scope:frontend", "P0", "status:todo"]
+        title: "feat(frontend): I-26 profile page"
+        labels: ["type:feature", "area:frontend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-21-header-and-protected-routes"]
 
@@ -820,32 +820,32 @@ sprints:
     description: "Bruno + Playwright + k6 + 3 profile CI + Release v1.0"
     issues:
       - slug: "I-27-bruno-contract-suite-fork"
-        title: "I-27 bruno-contract-suite-fork"
-        labels: ["type:test", "scope:backend", "P0", "status:todo"]
+        title: "test(backend): I-27 bruno contract suite fork"
+        labels: ["type:test", "area:backend", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-16-comment", "I-15-favorite", "I-14-article-detail-update-delete"]
       - slug: "I-28-playwright-e2e-fork"
-        title: "I-28 playwright-e2e-fork"
-        labels: ["type:test", "scope:frontend", "P0", "status:todo"]
+        title: "test(frontend): I-28 playwright e2e fork"
+        labels: ["type:test", "area:frontend", "priority:P0", "status:todo"]
         effort: "2d"
         blocked_by: ["I-26-profile-page", "I-25-article-detail-page"]
       - slug: "I-29-performance-k6-scenarios"
-        title: "I-29 performance-k6-scenarios"
-        labels: ["type:test", "scope:backend", "P1", "status:todo"]
+        title: "test(backend): I-29 performance k6 scenarios"
+        labels: ["type:test", "area:backend", "priority:P1", "status:todo"]
         effort: "1d"
         blocked_by: ["I-16-comment"]
       - slug: "I-30-3-profile-ci-matrix"
-        title: "I-30 3-profile-ci-matrix"
-        labels: ["type:chore", "scope:infra", "P0", "status:todo"]
+        title: "chore(infra): I-30 3-profile ci matrix"
+        labels: ["type:chore", "area:infra", "priority:P0", "status:todo"]
         effort: "1d"
         blocked_by: ["I-18-frontend-bootstrap", "I-01-project-bootstrap"]
       - slug: "I-31-coverage-gate-and-jacoco"
-        title: "I-31 coverage-gate-and-jacoco"
-        labels: ["type:chore", "scope:backend", "P1", "status:todo"]
+        title: "chore(backend): I-31 coverage gate and jacoco"
+        labels: ["type:chore", "area:backend", "priority:P1", "status:todo"]
         effort: "0.5d"
       - slug: "I-32-readme-and-release-v1.0"
-        title: "I-32 readme-and-release-v1.0"
-        labels: ["type:docs", "scope:docs", "P1", "status:todo"]
+        title: "docs(docs): I-32 readme and release v1.0"
+        labels: ["type:docs", "area:docs", "priority:P1", "status:todo"]
         effort: "0.5d"
         blocked_by:
           - "I-27-bruno-contract-suite-fork"
