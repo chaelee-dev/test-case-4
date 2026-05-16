@@ -1,0 +1,16 @@
+meta {
+  name: 01_list_articles
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/articles
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.articles: isArray
+  res.body.articlesCount: isNumber
+}

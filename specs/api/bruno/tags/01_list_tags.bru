@@ -1,0 +1,15 @@
+meta {
+  name: 01_list_tags
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/tags
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.tags: isArray
+}

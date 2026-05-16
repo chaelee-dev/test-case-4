@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "Conduit RealWorld API",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"]
+}
