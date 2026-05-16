@@ -1,0 +1,24 @@
+doc_type: brief
+extends: _common
+title_pattern: "^# .+ — Project Brief$"
+gate_value: A
+
+frontmatter:
+  doc_type: { value: brief }
+  gate: { value: A }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 한 줄 정의", required: true, severity: BLOCK }
+  - { heading: "## 2. 배경 / 문제 정의", required: true, severity: BLOCK }
+  - { heading: "## 3. 핵심 사용자 / 이해관계자", required: true, severity: BLOCK }
+  - { heading: "## 4. 목표 (성공 정의)", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 5. 비목표 (Out of Scope)", required: true, severity: BLOCK }
+  - { heading: "## 6. 일정 (대략)", required: true, severity: WARN }
+  - { heading: "## 7. 리스크 (초기 식별)", required: true, severity: WARN }
+  - { heading: "## 8. Open Questions", required: false, severity: INFO }
+
+tables:
+  - in_section: "## 4. 목표 (성공 정의)"
+    columns: [KPI, "측정 방법", 목표값, "달성 시점"]
+    severity: BLOCK

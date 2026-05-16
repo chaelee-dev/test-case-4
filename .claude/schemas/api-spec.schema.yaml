@@ -1,0 +1,33 @@
+doc_type: api-spec
+extends: _common
+title_pattern: "^# .+ — API Spec \\(LLD — 외부 인터페이스\\)"
+gate_value: C
+
+frontmatter:
+  doc_type: { value: api-spec }
+  gate: { value: C }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0], 번호 제거
+  - { heading: "## 1. 개요", required: true, severity: BLOCK }
+  - { heading: "## 2. 엔드포인트 목록", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 3. 엔드포인트 상세", required: true, severity: BLOCK }
+  - { heading: "## 4. Webhook / 콜백", required: false, severity: INFO }
+  - { heading: "## 5. Rate Limit / Quota", required: true, severity: WARN }
+
+tables:
+  - in_section: "## 2. 엔드포인트 목록"
+    columns: [메서드, 경로, 목적, F-ID, R-ID]
+    severity: BLOCK
+
+per_endpoint_must_contain:
+  in_subsection_pattern: "^### (GET|POST|PUT|PATCH|DELETE) /"
+  must_contain:
+    - { label: "Request", required: true, severity: BLOCK }
+    - { label: "Response 200", required: true, severity: BLOCK }
+    - { label: "Response 4xx/5xx", required: true, severity: BLOCK, must_contain_table: true }
+    - { label: "테스트 시나리오", required: true, severity: WARN }
+
+id_required:
+  - F-ID
+  - R-ID

@@ -1,0 +1,60 @@
+doc_type: wbs
+extends: _common
+title_pattern: "^# .+ — WBS"
+gate_value: operations
+
+frontmatter:
+  doc_type: { value: wbs }
+  gate: { value: operations }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 0. 개요", required: true, severity: BLOCK }
+  - { heading: "## 1. 스프린트 일람", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 2. 스프린트 상세", required: true, severity: BLOCK }
+  - { heading: "## 3. 의존성 그래프", required: true, severity: BLOCK }
+  - { heading: "## 4. 추적성 매트릭스", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 5. 리스크 매핑", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 6. 일정", required: true, severity: WARN }
+  - { heading: "## 7. sprint-bootstrap 입력", required: true, severity: BLOCK, must_contain_codeblock: true }
+  - { heading: "## 8. Open Questions", required: false, severity: INFO }
+
+tables:
+  - in_section: "## 1. 스프린트 일람"
+    columns: [Sprint, 기간, "목표(Outcome)", "주요 R-ID/F-ID", "이슈 수"]
+    severity: BLOCK
+  - in_section: "## 4. 추적성 매트릭스"
+    columns: [R-ID, F-ID, Sprint, "Issue Slug"]
+    severity: BLOCK
+  - in_section: "## 5. 리스크 매핑"
+    columns: ["15-risk Risk-ID", "영향 받는 Sprint/Issue", "대응 이슈"]
+    severity: WARN
+
+subsection_patterns:
+  - parent: "## 2. 스프린트 상세"
+    pattern: "^### Sprint [0-9]+"
+    severity: BLOCK
+
+per_issue_must_contain:
+  in_subsection_pattern: "^##### Issue: "
+  must_contain:
+    - { label: "유형", pattern: "(feature|bug|chore|docs|test)", severity: BLOCK }
+    - { label: "영역", pattern: "(frontend|backend|agent|infra|docs)", severity: BLOCK }
+    - { label: "우선순위", pattern: "P[0-3]", severity: BLOCK }
+    - { label: "Estimated Effort", pattern: "(0\\.5|1|2|3)d", severity: BLOCK }
+    - { label: "Acceptance Criteria", pattern: "Given.+When.+Then", severity: BLOCK }
+    - { label: "Contract Before", required: true, severity: BLOCK }
+    - { label: "Contract.*After", required: true, severity: BLOCK }
+    - { label: "DoD Checklist", required: true, severity: BLOCK }
+
+sprint_bootstrap_yaml_must_contain:
+  in_section: "## 7. sprint-bootstrap 입력"
+  must_contain_keys:
+    - "sprints:"
+    - "project:"
+  severity: BLOCK
+
+id_required:
+  - R-ID
+  - F-ID
+  - Sprint

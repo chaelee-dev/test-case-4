@@ -1,0 +1,32 @@
+doc_type: feature-code-review
+extends: _common
+title_pattern: "^# .+ — Code Review"
+gate_value: feature
+filename_pattern: "^(feat|mod|bug|design)-[a-z0-9-]+\\.code-review\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-code-review }
+  gate: { value: feature }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 0. Verdict", required: true, severity: BLOCK }
+  - { heading: "## 1. 컨트랙트 충실도", required: true, severity: BLOCK }
+  - { heading: "## 2. 테스트 커버리지", required: true, severity: BLOCK }
+  - { heading: "## 3. 보안 / 시크릿", required: true, severity: BLOCK }
+  - { heading: "## 4. 가독성 / 단순성", required: true, severity: WARN }
+  - { heading: "## 5. 발견 사항 (3축 OX 분류)", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 6. NEEDS-WORK 항목", required: false, severity: INFO }
+
+verdict_must_contain:
+  in_section: "## 0. Verdict"
+  must_contain:
+    - { label: "verdict", pattern: "(PASS|NEEDS-WORK|FAIL)", severity: BLOCK }
+    - { label: "reviewer", pattern: "@", severity: BLOCK }
+    - { label: "review_at", pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}", severity: BLOCK }
+
+tables:
+  - in_section: "## 5. 발견 사항 (3축 OX 분류)"
+    columns: [발견, in_scope, blocks_merge, same_area, 처리]
+    severity: BLOCK
+    description: "ADR-0008 3축 OX"

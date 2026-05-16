@@ -1,0 +1,17 @@
+doc_type: feasibility
+extends: _common
+title_pattern: "^# .+ — Feasibility"
+gate_value: A
+
+frontmatter:
+  doc_type: { value: feasibility }
+  gate: { value: A }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 시장·환경 검토", required: true, severity: BLOCK }
+  - { heading: "## 2. 기술 타당성", required: true, severity: BLOCK }
+  - { heading: "## 3. 비용·리소스 추정", required: true, severity: BLOCK }
+  - { heading: "## 4. 기대 효과", required: true, severity: BLOCK }
+  - { heading: "## 5. 검토된 대안", required: true, severity: BLOCK }
+  - { heading: "## 6. 추천", required: true, severity: BLOCK }

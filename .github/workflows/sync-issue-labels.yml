@@ -1,0 +1,77 @@
+name: Sync Issue Labels on PR
+# ADR-0029 — PR 이벤트 기반 status:* 자동 전이/청소
+#
+# 동작:
+#  - PR opened / ready_for_review → linked issue의 status:in-progress → status:in-review 전이
+#  - PR closed && merged          → linked issue의 status:* 일괄 제거 (tested는 보존)
+#
+# linked issue 파싱: PR body의 `Closes|Fixes|Resolves #N` (대소문자 무관)
+# draft PR은 ready_for_review 시점에 처리 (opened만으로는 draft 진입 시 조기 전이 방지)
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, closed]
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  sync-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract linked issues from PR body
+        id: extract
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -eu
+          # `Closes #N`, `Fixes #N`, `Resolves #N` (대소문자 무관) 패턴 추출
+          ISSUES=$(printf '%s' "$PR_BODY" \
+            | grep -oiE '(closes|fixes|resolves)[[:space:]]+#[0-9]+' \
+            | grep -oE '#[0-9]+' \
+            | tr -d '#' \
+            | sort -u \
+            | tr '\n' ' ')
+          echo "Found linked issues: ${ISSUES:-(none)}"
+          echo "issues=$ISSUES" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if no linked issues
+        if: steps.extract.outputs.issues == ''
+        run: echo "PR body has no Closes/Fixes/Resolves reference — skipping label sync."
+
+      - name: Transition labels on PR open / ready_for_review
+        if: |
+          steps.extract.outputs.issues != '' &&
+          (github.event.action == 'opened' || github.event.action == 'ready_for_review') &&
+          github.event.pull_request.draft == false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -eu
+          for N in ${{ steps.extract.outputs.issues }}; do
+            echo "→ #$N: status:in-progress → status:in-review"
+            gh issue edit "$N" --repo "$REPO" \
+              --add-label "status:in-review" \
+              --remove-label "status:in-progress" 2>&1 || \
+              echo "  (warn: 라벨 전이 실패 — 라벨 부재 또는 권한 문제)"
+          done
+
+      - name: Cleanup status:* labels on merge
+        if: |
+          steps.extract.outputs.issues != '' &&
+          github.event.action == 'closed' &&
+          github.event.pull_request.merged == true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -eu
+          # status:* 일괄 제거. tested 라벨은 보존 (이력 보존 정책 — CLAUDE.md §FSM 매핑)
+          for N in ${{ steps.extract.outputs.issues }}; do
+            echo "→ #$N: cleanup status:* labels (preserving 'tested')"
+            for L in status:todo status:in-progress status:in-review status:blocked; do
+              gh issue edit "$N" --repo "$REPO" --remove-label "$L" 2>&1 || true
+            done
+          done

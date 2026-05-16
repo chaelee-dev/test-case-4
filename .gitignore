@@ -1,0 +1,76 @@
+# =====================================================================
+# agent-toolkit 도입 시 newProject .gitignore에 추가할 패턴
+# =====================================================================
+# 사용:
+#   1. newProject에 기존 .gitignore가 없으면: 본 파일을 .gitignore로 카피
+#      copy docs/install/gitignore.template .gitignore
+#   2. 기존 .gitignore가 있으면: 본 파일 내용을 끝에 append
+#      type docs/install/gitignore.template >> .gitignore
+#
+# 본 템플릿은 "토킷이 동작하기 위해 반드시 필요한" 보안·Claude Code·gstack
+# 패턴만 포함한다. 언어 스택(Java/Node/Python 등)·IDE·OS 패턴은 newProject
+# 의 기술 스택 결정 후 별도로 추가한다.
+# =====================================================================
+
+# ========================================
+# 보안: 절대 커밋 금지 (CLAUDE.md 보안 절대 규칙 정합)
+# ========================================
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+credentials.json
+service-account*.json
+**/secrets/
+**/secret.*
+!**/secret.ts
+!**/secret.java
+**/*api_key*
+**/*apikey*
+
+# ========================================
+# Claude Code (per-user / 런타임 상태)
+# ========================================
+.claude/settings.local.json
+.claude/worktrees/
+.claude/agent-memory/
+.claude/state/
+.claude/skills/gstack/node_modules/
+.claude/skills/gstack/browse/dist/
+.claude/skills/gstack/.agents/
+.claude/skills/gstack/bun.lock
+.gstack/
+
+# gstack 심볼릭 링크 (setup이 자동 생성, 커밋 불필요)
+.claude/skills/autoplan
+.claude/skills/benchmark
+.claude/skills/browse
+.claude/skills/canary
+.claude/skills/careful
+.claude/skills/codex
+.claude/skills/cso
+.claude/skills/design-consultation
+.claude/skills/design-review
+.claude/skills/document-release
+.claude/skills/freeze
+.claude/skills/gstack-upgrade
+.claude/skills/guard
+.claude/skills/investigate
+.claude/skills/land-and-deploy
+.claude/skills/office-hours
+.claude/skills/plan-ceo-review
+.claude/skills/plan-design-review
+.claude/skills/plan-eng-review
+.claude/skills/qa
+.claude/skills/qa-only
+.claude/skills/retro
+.claude/skills/review
+.claude/skills/setup-browser-cookies
+.claude/skills/setup-deploy
+.claude/skills/ship
+.claude/skills/unfreeze

@@ -1,0 +1,39 @@
+doc_type: feature-investigation
+extends: _common
+title_pattern: "^# .+ — Bug Investigation"
+gate_value: feature
+filename_pattern: "^bug-[a-z0-9-]+\\.investigation\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-investigation }
+  gate: { value: feature }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 현상 / 보고", required: true, severity: BLOCK }
+  - { heading: "## 2. 재현 절차", required: true, severity: BLOCK }
+  - { heading: "## 3. 환경 / 컨텍스트", required: true, severity: BLOCK }
+  - { heading: "## 4. 로그·증적", required: true, severity: WARN }
+  - { heading: "## 5. 가설 + 근거", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 6. 근본 원인 (Root Cause)", required: true, severity: BLOCK }
+  - { heading: "## 7. 회귀 테스트 추가 항목", required: true, severity: BLOCK }
+  - { heading: "## 8. 영향 받는 다른 영역", required: true, severity: WARN }
+
+phenomenon_must_contain:
+  in_section: "## 1. 현상 / 보고"
+  must_contain:
+    - { label: "보고 출처", pattern: "(사용자|모니터링|테스트 실패)", severity: BLOCK }
+    - { label: "현상", required: true, severity: BLOCK }
+    - { label: "재현 빈도", pattern: "(항상|자주|가끔|1회)", severity: BLOCK }
+    - { label: "영향 범위", required: true, severity: BLOCK }
+
+reproduce_must_contain:
+  in_section: "## 2. 재현 절차"
+  must_contain:
+    - { label: "기대", required: true, severity: BLOCK }
+    - { label: "실제", required: true, severity: BLOCK }
+
+tables:
+  - in_section: "## 5. 가설 + 근거"
+    columns: [가설, 근거, "검증 방법", 결과]
+    severity: BLOCK

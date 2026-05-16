@@ -1,0 +1,114 @@
+# DevToolKit 기본 기술 스택 + 아키텍처 + 코드 컨벤션 설정
+# PRD에 명시되어 있으면 PRD가 우선.
+# 이 파일은 PRD에 없을 때의 기본값(fallback)으로 사용된다.
+
+project:
+  name: ""
+  description: ""
+  type: "fullstack"                    # fullstack | frontend | backend | library
+
+tech_stack:
+  frontend:
+    framework: "react"                 # react | vue | next | angular | svelte
+    version: "19"                      # 최신 스테이블 (기본값)
+    language: "typescript"
+    build_tool: "vite"
+    styling: "tailwindcss"
+    state_management: "zustand"        # zustand | redux-toolkit | recoil | jotai
+    testing: "vitest"
+    e2e_testing: "playwright"
+    linting: "eslint"
+    formatting: "prettier"
+
+  backend:
+    framework: "springboot"            # springboot | express | fastapi | nestjs
+    version: "3.4"                     # 최신 스테이블 (기본값)
+    language: "java"                   # java | kotlin | typescript | python
+    java_version: "21"
+    build_tool: "gradle"
+    database: "postgresql"
+    orm: "jpa"
+    cache: "redis"                     # redis | none
+    testing: "junit5"
+    api_docs: "springdoc-openapi"
+
+  infrastructure:
+    containerization: "docker"
+    ci_cd: "github-actions"
+    cloud: ""                          # aws | gcp | azure | none
+
+# ============================================================
+# 아키텍처 패턴
+# PRD에 아키텍처 요구사항이 있으면 PRD 우선.
+# ============================================================
+architecture:
+  frontend:
+    pattern: "feature-based"           # feature-based | atomic | fsd | atomic-fsd
+    # feature-based: features/{feature}/components,hooks,types (기본, 중소규모)
+    # atomic: atoms/molecules/organisms/templates/pages (UI 컴포넌트 중심)
+    # fsd: Feature-Sliced Design (app/processes/pages/widgets/features/entities/shared)
+    # atomic-fsd: Atomic + FSD 혼합 (대규모 프로젝트)
+    ui_library: ""                     # shadcn | mui | antd | chakra | none
+    # shadcn: Radix UI + TailwindCSS 기반 (커스터마이징 용이)
+    # mui: Material UI (Google Material Design)
+    # antd: Ant Design (엔터프라이즈)
+
+  backend:
+    pattern: "layered"                 # layered | hexagonal | clean | ddd
+    # layered: Controller → Service → Repository → Entity (기본, 중소규모)
+    # hexagonal: Port & Adapter (외부 시스템 연동 많을 때)
+    # clean: Clean Architecture (UseCase 중심, 의존성 역전)
+    # ddd: Domain-Driven Design (복잡한 비즈니스 로직)
+
+# ============================================================
+# 코드 컨벤션
+# Architect 에이전트가 docs/design/code-conventions.md 생성 시 참조.
+# ============================================================
+conventions:
+  frontend:
+    component_style: "function"        # function (기본) | class
+    file_naming: "PascalCase"          # PascalCase (컴포넌트), camelCase (유틸/훅)
+    hook_prefix: "use"                 # useTodos, useAuth 등
+    api_client: "fetch"               # fetch | axios | ky
+    error_boundary: true
+    strict_mode: true
+
+  backend:
+    package_base: "com.devtoolkit"     # 프로젝트별 변경
+    layer_naming:                      # 레이어별 클래스 네이밍 규칙
+      controller: "{Domain}Controller"
+      service: "{Domain}Service"
+      repository: "{Domain}Repository"
+      entity: "{Domain}"
+      dto_request: "{Domain}CreateRequest"
+      dto_response: "{Domain}Response"
+    exception_handling: "global"       # global (GlobalExceptionHandler) | per-controller
+    response_wrapper: "ApiResponse"    # 공통 응답 래퍼 클래스명
+    error_code_pattern: "{DOMAIN}_{CATEGORY}_{DETAIL}"  # AUTH_TOKEN_EXPIRED 등
+    validation: "bean-validation"      # bean-validation (@Valid) | manual
+    logging: "slf4j"                   # slf4j | log4j2
+
+  common:
+    git_commit_format: "conventional"  # conventional (feat/fix/chore) | free
+    branch_prefix: "feature/"          # feature/ | feat/
+    pr_template: true
+    code_review: "required"
+
+# ============================================================
+# 빌드·실행 명령은 본 파일에 두지 않음 (ADR-0041 — devkit wrapper 폐기)
+# 정본 = docs/planning/12-scaffolding/12-scaffolding.md §5 (SoT)
+#       + 루트 LOCAL.md §3 Profile별 부팅 명령 (유저 facing, ADR-0040)
+# /implement, /qa-test 등은 12-scaffolding §5 / LOCAL.md §3을 직접 참조한다.
+# (이전 ADR-0027 3-fallback / ADR-0028 commands.* 블록은 ADR-0041로 폐기)
+# ============================================================
+
+collaboration:
+  vcs: "github"                        # 필수
+  branching_strategy: "gitflow"        # gitflow | trunk-based | github-flow
+  code_review: "required"
+
+agent:
+  team_size: 3                         # 3~5 권장
+  parallel_tasks: true
+  safety_guard: true                   # /careful 상시 활성화
+  # teammate_mode는 .claude/settings.json의 teammateMode에서 설정

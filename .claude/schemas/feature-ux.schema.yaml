@@ -1,0 +1,23 @@
+doc_type: feature-ux
+extends: _common
+title_pattern: "^# .+ — Feature UX"
+gate_value: feature
+filename_pattern: "^(feat|mod|bug|design)-[a-z0-9-]+\\.ux\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-ux }
+  gate: { value: feature }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 화면 영향", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 2. 와이어프레임 / 플로우", required: true, severity: BLOCK }
+  - { heading: "## 3. 상태 / 전이", required: true, severity: BLOCK }
+  - { heading: "## 4. 접근성·반응형 영향", required: true, severity: WARN }
+  - { heading: "## 5. 디자인 토큰 변경", required: false, severity: INFO }
+  - { heading: "## 6. UI 회귀 위험", required: true, severity: WARN }
+
+tables:
+  - in_section: "## 1. 화면 영향"
+    columns: ["화면 ID", "변경 종류", "변경 전", "변경 후"]
+    severity: BLOCK

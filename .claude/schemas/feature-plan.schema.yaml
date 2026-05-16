@@ -1,0 +1,30 @@
+doc_type: feature-plan
+extends: _common
+title_pattern: "^# .+ — Implementation Plan"
+gate_value: feature
+filename_pattern: "^(feat|mod|bug|design)-[a-z0-9-]+\\.plan\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-plan }
+  gate: { value: feature }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 커밋 시퀀스 (DAG)", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 2. 의존성 그래프", required: true, severity: BLOCK }
+  - { heading: "## 3. 테스트 매핑", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 4. 빌드·실행 검증 단계", required: true, severity: BLOCK, must_contain_codeblock: true }
+  - { heading: "## 5. 점진 합의 / 결정 발생 항목", required: true, severity: WARN }
+
+tables:
+  - in_section: "## 1. 커밋 시퀀스 (DAG)"
+    columns: ["#", 커밋, "영향 파일", "테스트 추가", "회귀 위험"]
+    severity: BLOCK
+  - in_section: "## 3. 테스트 매핑"
+    columns: [커밋, "테스트 추가 위치", 시나리오]
+    severity: BLOCK
+
+adr_required_must_contain:
+  in_section: "## 5. 점진 합의 / 결정 발생 항목"
+  must_contain:
+    - { label: "ADR 작성 필요", pattern: "(yes|no)", severity: BLOCK }

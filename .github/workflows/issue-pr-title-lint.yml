@@ -1,0 +1,72 @@
+# 이슈/PR 제목 명명 규칙 강제 (ADR-0021)
+# 정규식: ^(feat|fix|chore|docs|test|refactor)\([a-z][a-z0-9,_-]*\): .+$
+# 정본: docs/planning/policies/github-issue.md §1.5
+# 사용자 가이드: docs/install/github-issue-guide.md §1.1
+name: issue-pr-title-lint
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  lint-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate title format
+        env:
+          TITLE: ${{ github.event.issue.title || github.event.pull_request.title }}
+          KIND: ${{ github.event_name }}
+          NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -u
+          REGEX='^(feat|fix|chore|docs|test|refactor)\([a-z][a-z0-9,_-]*\): .+$'
+
+          if [ -z "${TITLE:-}" ]; then
+            echo "::warning::Title is empty"
+            exit 0
+          fi
+
+          if echo "$TITLE" | grep -qE "$REGEX"; then
+            echo "::notice::Title OK — $TITLE"
+            exit 0
+          fi
+
+          # 형식 불일치 — 코멘트 + 실패
+          MSG=$(cat <<EOF
+          ❌ 제목 형식이 잘못되었습니다 (ADR-0021).
+
+          현재: \`$TITLE\`
+
+          올바른 형식:
+          \`\`\`
+          <type>(<area>): <summary>
+          \`\`\`
+
+          - **type**: \`feat\` · \`fix\` · \`chore\` · \`docs\` · \`test\` · \`refactor\`
+          - **area**: 모듈/도메인 (06 Architecture §3 인벤토리 도출). 3개 이상이면 \`multi\` + 본문 \`## Touched Areas\` 표 강제
+          - **summary**: 한글/영문 자유, 50자 권고, 동사로 시작 권고
+
+          예시:
+          - \`feat(auth): 로그인 폼 추가\`
+          - \`fix(billing,session): 토큰 만료 시 결제 콜백 검증 누락 보정\`
+          - \`refactor(multi): 에러 코드 PREFIX 표준화\`
+
+          자세한 가이드: [\`docs/install/github-issue-guide.md\`](../blob/main/docs/install/github-issue-guide.md)
+          EOF
+          )
+
+          if [ "$KIND" = "issues" ]; then
+            gh issue comment "$NUMBER" --body "$MSG"
+          else
+            gh pr comment "$NUMBER" --body "$MSG"
+          fi
+
+          echo "::error::제목 형식 BLOCK — 위 코멘트 참조"
+          exit 1

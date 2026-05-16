@@ -1,0 +1,30 @@
+doc_type: feature-brief
+extends: _common
+title_pattern: "^# .+ — Feature Brief"
+gate_value: feature
+filename_pattern: "^(feat|mod|bug|design)-[a-z0-9-]+\\.brief\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-brief }
+  gate: { value: feature }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 한 줄 의도", required: true, severity: BLOCK }
+  - { heading: "## 2. 사용자 가치", required: true, severity: BLOCK }
+  - { heading: "## 3. 현재 상태 → 변경 후 상태", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 4. 모드 자동 감지 결과", required: true, severity: BLOCK }
+  - { heading: "## 5. 영향 범위", required: true, severity: BLOCK }
+  - { heading: "## 6. 비목표", required: true, severity: WARN }
+  - { heading: "## 7. Open Questions", required: false, severity: INFO }
+
+mode_must_contain:
+  in_section: "## 4. 모드 자동 감지 결과"
+  must_contain:
+    - { label: "mode", pattern: "(add|modify|bug|design)", severity: BLOCK }
+    - { label: "근거", required: true, severity: BLOCK }
+
+tables:
+  - in_section: "## 3. 현재 상태 → 변경 후 상태"
+    columns: [측면, 현재, "변경 후"]
+    severity: BLOCK

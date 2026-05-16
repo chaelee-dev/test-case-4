@@ -1,0 +1,38 @@
+doc_type: feature-risk
+extends: _common
+title_pattern: "^# .+ — Feature Risk"
+gate_value: feature
+filename_pattern: "^(feat|mod|bug|design)-[a-z0-9-]+\\.risk\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-risk }
+  gate: { value: feature }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 본 변경의 리스크", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 2. 리스크 상세", required: true, severity: BLOCK }
+  - { heading: "## 3. High 등급 단계적 롤아웃", required: true, severity: BLOCK }
+  - { heading: "## 4. 데이터 영속성 변경", required: false, severity: INFO }
+  - { heading: "## 5. 15-risk.md 갱신 항목", required: false, severity: INFO }
+
+tables:
+  - in_section: "## 1. 본 변경의 리스크"
+    columns: [RISK-ID, 제목, "영향(1~5)", "가능성(1~5)", 등급]
+    severity: BLOCK
+
+subsection_patterns:
+  - parent: "## 2. 리스크 상세"
+    pattern: "^### F-RISK-[0-9]{2,}"
+    severity: BLOCK
+
+per_risk_must_contain:
+  in_subsection_pattern: "^### F-RISK-[0-9]{2,}"
+  must_contain:
+    - { label: "카테고리", pattern: "(데이터 영속성|호환성|성능|보안|외부 의존)", severity: BLOCK }
+    - { label: "트리거 신호", required: true, severity: BLOCK }
+    - { label: "완화 전략", required: true, severity: BLOCK }
+    - { label: "검증 방법", required: true, severity: BLOCK }
+
+id_required:
+  - RISK-ID

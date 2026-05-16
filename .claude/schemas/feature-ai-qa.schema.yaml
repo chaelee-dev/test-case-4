@@ -1,0 +1,122 @@
+doc_type: feature-ai-qa
+extends: _common
+title_pattern: "^# .+ — AI QA Report"
+gate_value: feature
+filename_pattern: "^(feat|mod|bug|design)-[a-z0-9-]+\\.ai-qa-report\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-ai-qa }
+  gate: { value: feature }
+  # ADR-0011: AI 게이트 5축 확장 — UI/FE 변경 PR 브라우저 골든패스 실증 의무화
+  ui_changed:
+    required: true
+    severity: BLOCK
+    enum: [true, false]
+    description: "UI/FE 변경 포함 여부. true이면 5번째 축(브라우저 골든패스) BLOCK 활성화"
+  screenshots:
+    required_when: "ui_changed == true"
+    severity: BLOCK
+    type: array
+    min_length: 1
+    description: "ui_changed=true일 때 변경된 화면별 1장 이상 (경로 배열)"
+  golden_path_verified:
+    required_when: "ui_changed == true"
+    severity: BLOCK
+    enum: [true, false]
+    required_value: true
+    description: "ui_changed=true일 때 브라우저에서 골든패스 1개 이상 실제 수행했음을 명시"
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 0. Verdict", required: true, severity: BLOCK }
+  - { heading: "## 1. Test Plan 4블록", required: true, severity: BLOCK }
+  # ADR-0037: 5축 → 6축. 헤딩 변경
+  - { heading: "## 2. AI 게이트 6축", required: true, severity: BLOCK }
+  - { heading: "## 3. 시나리오 인용", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 4. FAIL 항목", required: false, severity: INFO }
+  - { heading: "## 5. 발견 사항", required: false, severity: INFO }
+  - { heading: "## 6. UI/FE 변경 검증", required_when: "ui_changed == true", severity: BLOCK }
+  # ADR-0037: 매 PR 부팅 검증 — UI 변경 여부 무관 (BE-only 포함)
+  - { heading: "## 7. 로컬 부팅 가능성", required: true, severity: BLOCK, must_contain_table: true }
+
+verdict_must_contain:
+  in_section: "## 0. Verdict"
+  must_contain:
+    - { label: "verdict", pattern: "(PASS|FAIL)", severity: BLOCK }
+    - { label: "at", pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}", severity: BLOCK }
+    - { label: "ui_changed", pattern: "(true|false)", severity: BLOCK }
+    # ADR-0032: PR 본문에 Flow Mode 명시 — flow-feature 모드 자동 결정 사후 추적용
+    - { label: "Flow Mode", pattern: "(add|modify|bug|design)", severity: BLOCK, description: "ADR-0032 — /flow-feature 모드 자동 결정 결과 명시" }
+    - { label: "Mode Decision Trace", required: true, severity: BLOCK, description: "ADR-0032 — 발동된 규칙 번호 + 시그널 (예: '규칙 4 (부정 시그널 0건, type:feature 라벨)')" }
+
+test_plan_must_contain:
+  in_section: "## 1. Test Plan 4블록"
+  required_subsections:
+    - "### Build"
+    - "### Automated tests"
+    - "### Manual verification"
+    - "### DoD coverage"
+  severity: BLOCK
+  description: "D-06 Test Plan 4블록 강제"
+
+# ADR-0011: 4축 → 5축 (브라우저 골든패스 실증)
+# ADR-0037: 5축 → 6축 (로컬 부팅 가능성)
+# ADR-0038: 5번째 축에 stylesheet 적용 하위 체크 추가 (ui_changed=true일 때)
+ai_gate_must_contain:
+  in_section: "## 2. AI 게이트 6축"
+  must_contain:
+    - { label: "자동 테스트 통과", required: true, severity: BLOCK }
+    - { label: "AI 코드 리뷰 PASS", required: true, severity: BLOCK }
+    - { label: "Test Plan 4블록 첨부", required: true, severity: BLOCK }
+    - { label: "시크릿·보안 스캔 통과", required: true, severity: BLOCK }
+    - { label: "브라우저 골든패스 실증", required: true, severity: BLOCK, conditional: "ui_changed==true ? PASS : N/A" }
+    # ADR-0038: ui_changed=true일 때 stylesheet 적용 ≥ 1개 명시 — plain HTML 머지 차단
+    - { label: "stylesheet 적용 확인", required: true, severity: BLOCK, conditional: "ui_changed==true ? PASS : N/A", description: "ADR-0038 — frontend 빌드 산출 또는 dev 응답에 stylesheet 1개 이상 명시" }
+    # ADR-0037: 6번째 축 — fresh checkout → install → dev/runtime 부팅
+    - { label: "로컬 부팅 가능성", required: true, severity: BLOCK, description: "ADR-0037 — 12-scaffolding §5 부팅 명령 실행 결과 ready 신호 + 에러 0건" }
+
+# ADR-0011: ui_changed=true일 때만 활성화되는 BLOCK
+ui_change_verification:
+  in_section: "## 6. UI/FE 변경 검증"
+  required_when: "ui_changed == true"
+  severity: BLOCK
+  must_contain:
+    - { label: "gstack_qa_used", pattern: "(gstack /qa|browse 바이너리|playwright)", severity: BLOCK }
+    - { label: "console_errors", pattern: "(0개|none|N/A 사전 합의)", severity: BLOCK }
+    # ADR-0038: stylesheet 적용 근거 — bundle/link/component 단위
+    - { label: "stylesheet 적용 근거", pattern: "(stylesheet|css bundle|tailwind|emotion|styled|CSS Module|vanilla-extract)", severity: BLOCK, description: "ADR-0038 — 적용된 스타일링 솔루션의 실제 산출 명시" }
+  must_contain_table: true
+
+# ADR-0037: §7 로컬 부팅 가능성 — UI 변경 무관 전 PR 적용
+# v1.1: profile 3분기 — dev/stg/prod 각각 부팅 검증
+# ADR-0040: LOCAL.md 동기 갱신 확인 — 부팅 자산 변경 시 루트 LOCAL.md 동시 갱신 강제
+local_runnability:
+  in_section: "## 7. 로컬 부팅 가능성"
+  severity: BLOCK
+  must_contain:
+    - { label: "부팅 명령", required: true, severity: BLOCK, description: "12-scaffolding §5에서 인용한 명령 (profile별 각각)" }
+    - { label: "dev profile", pattern: "(listening|ready|started|running|N/A)", severity: BLOCK, description: "ADR-0037 v1.1 — dev profile ready 신호" }
+    - { label: "stg profile", pattern: "(listening|ready|started|running|N/A)", severity: BLOCK, description: "ADR-0037 v1.1 — stg profile ready 신호 (단일 환경이면 N/A + 사유)" }
+    - { label: "prod profile", pattern: "(listening|ready|started|running|N/A)", severity: BLOCK, description: "ADR-0037 v1.1 — prod profile ready 신호 (단일 환경이면 N/A + 사유)" }
+    - { label: "에러", pattern: "(0건|none|N/A)", severity: BLOCK }
+    - { label: "부팅 자산 변경 영향", required: true, severity: BLOCK, description: "본 PR diff와 12-scaffolding §7 자산 표 대조 결과" }
+    - { label: "LOCAL.md 동기", pattern: "(✅|N/A 부팅 자산 변경 없음)", severity: BLOCK, description: "ADR-0040 — 부팅 자산이 변경됐다면 루트 LOCAL.md도 같은 PR에서 갱신됐는지 확인" }
+  must_contain_table: true
+
+tables:
+  - in_section: "## 3. 시나리오 인용"
+    columns: [시나리오, 출처, 결과]
+    severity: BLOCK
+  # ADR-0038: stylesheet 적용 컬럼 추가
+  - in_section: "## 6. UI/FE 변경 검증"
+    columns: [화면, 시나리오, 스크린샷경로, "stylesheet 적용"]
+    severity: BLOCK
+    required_when: "ui_changed == true"
+  # ADR-0037 v1.1: profile 3분기 부팅 결과 표 — dev/stg/prod 각각 ready 신호 + 에러 0건
+  - in_section: "## 7. 로컬 부팅 가능성"
+    columns: [프로파일, "부팅 명령", "결과 (ready 신호)", "에러", "부팅 자산 변경"]
+    severity: BLOCK
+
+id_required:
+  - AC-ID
+  - R-ID

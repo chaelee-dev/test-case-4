@@ -1,0 +1,44 @@
+doc_type: feature-acceptance
+extends: _common
+title_pattern: "^# .+ — Acceptance Criteria"
+gate_value: feature
+filename_pattern: "^(feat|mod|bug|design)-[a-z0-9-]+\\.acceptance\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-acceptance }
+  gate: { value: feature }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 인수 기준 (Given/When/Then)", required: true, severity: BLOCK }
+  - { heading: "## 2. Definition of Done (D-06)", required: true, severity: BLOCK }
+  - { heading: "## 3. 비기능 인수", required: false, severity: INFO }
+  - { heading: "## 4. 회귀 인수", required: false, severity: INFO }
+
+subsection_patterns:
+  - parent: "## 1. 인수 기준 (Given/When/Then)"
+    pattern: "^### AC-[0-9]{2,}: .+$"
+    severity: BLOCK
+
+per_ac_must_contain:
+  in_subsection_pattern: "^### AC-[0-9]{2,}"
+  must_contain:
+    - { label: "Given", required: true, severity: BLOCK }
+    - { label: "When", required: true, severity: BLOCK }
+    - { label: "Then", required: true, severity: BLOCK }
+    - { label: "측정 방법", pattern: "(자동 테스트|수동 확인|모니터링)", severity: BLOCK }
+    - { label: "R-ID", pattern: "R-", severity: BLOCK }
+
+dod_must_contain:
+  in_section: "## 2. Definition of Done (D-06)"
+  must_contain:
+    - { label: "단위 테스트", required: true, severity: BLOCK }
+    - { label: "AI 게이트", required: true, severity: BLOCK }
+    - { label: "Test Plan 4블록", required: true, severity: BLOCK }
+    - { label: "tested 라벨", required: true, severity: BLOCK }
+    - { label: "Approve", required: true, severity: BLOCK }
+    - { label: "CI green", required: true, severity: BLOCK }
+
+id_required:
+  - AC-ID
+  - R-ID

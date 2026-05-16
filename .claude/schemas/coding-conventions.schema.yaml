@@ -1,0 +1,28 @@
+doc_type: coding-conventions
+extends: _common
+title_pattern: "^# .+ — Coding Conventions"
+gate_value: C
+
+frontmatter:
+  doc_type: { value: coding-conventions }
+  gate: { value: C }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0], 번호 제거
+  - { heading: "## 1. 명명 규칙", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 2. 에러 코드 PREFIX/SUFFIX", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 3. 언어 관용구", required: true, severity: BLOCK }
+  - { heading: "## 4. 주석 정책", required: true, severity: BLOCK }
+  - { heading: "## 5. Lint·포맷", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 6. Import 정책", required: true, severity: WARN }
+
+tables:
+  - in_section: "## 1. 명명 규칙"
+    columns: [항목, 규칙, 예]
+    severity: BLOCK
+  - in_section: "## 2. 에러 코드 PREFIX/SUFFIX"
+    columns: [도메인, PREFIX, 예]
+    severity: BLOCK
+  - in_section: "## 5. Lint·포맷"
+    columns: [도구, 룰셋, "자동 강제"]
+    severity: BLOCK

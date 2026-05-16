@@ -1,0 +1,74 @@
+doc_type: scaffolding
+extends: _common
+title_pattern: "^# .+ — Scaffolding"
+gate_value: C
+filename_pattern: "^[a-z][a-z0-9-]+\\.md$"
+location: "docs/planning/12-scaffolding/"
+
+frontmatter:
+  doc_type: { value: scaffolding }
+  gate: { value: C }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0], 번호 제거
+  - { heading: "## 1. 디렉토리 트리", required: true, severity: BLOCK, must_contain_codeblock: true }
+  - { heading: "## 2. 패키지 명명 규칙", required: true, severity: BLOCK }
+  - { heading: "## 3. 디자인 패턴 결정", required: true, severity: BLOCK }
+  - { heading: "## 4. 모듈 경계 (08-lld-module-spec와 fan-out)", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 5. 빌드·실행", required: true, severity: BLOCK, must_contain_codeblock: true }
+  - { heading: "## 6. 환경 변수 / 설정 분리", required: true, severity: BLOCK, must_contain_table: true }
+  # ADR-0037: 부팅 자산을 12-scaffolding 시점에 사전 등록 — newProject 시리즈 중 부팅 부채 누적 차단
+  - { heading: "## 7. 부팅 자산 (Runnability Assets)", required: true, severity: BLOCK, must_contain_table: true }
+  # ADR-0038: frontend layer가 있는 스택에 한해 styling 솔루션 선택·설치 강제. BE-only는 N/A 명시 허용
+  - { heading: "## 8. 스타일링 솔루션", required: true, severity: BLOCK, must_contain_table: true }
+
+design_pattern_must_contain:
+  in_section: "## 3. 디자인 패턴 결정"
+  must_contain:
+    - { label: "선택 패턴", pattern: "(Atomic|DDD|FSD|MVC|Layered|Hexagonal)", severity: BLOCK }
+    - { label: "이유", required: true, severity: BLOCK }
+
+# ADR-0037 v1.1 (profile 3분기): §6 환경 변수 표를 profile 3분기(dev/stg/prod) 강제
+# 컬럼 [키, dev, stg, prod, 노출 위치]로 변경 시점에 누락 컬럼 BLOCK
+env_var_separation_must_contain:
+  in_section: "## 6. 환경 변수 / 설정 분리"
+  must_contain:
+    - { label: "profile 컬럼", pattern: "(dev.+stg.+prod|dev.+staging.+prod)", severity: BLOCK, description: "ADR-0037 v1.1 — dev/stg/prod 3 profile 분기 컬럼 강제. 단일 환경 운영(stg=prod, 또는 단일 환경)은 표 비고 컬럼에 'stg=prod 공유' 등 명시 후 허용." }
+  must_contain_table: true
+
+# ADR-0037: 부팅 자산 정의 — newProject 도입 시 어떤 자산이 부팅을 좌우하는지 사전 등록
+# v1.1: profile 3분기. .env.example 단수 → .env.{dev,stg,prod}.example 복수, 부팅 명령도 profile별 명시
+# v1.2: "DB migrations" 단일 라벨 → "스키마 적용 (dev iteration)" + "DB migrations (stg/prod release)"
+#       2행 분리. test-case-3 PR #37 회귀(prisma migrate deploy만 있고 최초 부팅 시 migrations/ 비어
+#       있어서 DB 빈 상태) 흡수. dev iteration용은 db push / synchronize / create_all 류, stg/prod
+#       release용은 migration 파일 디렉토리. 두 흐름이 다른 자산임을 schema-level로 강제.
+# AI 게이트 6번째 축이 매 PR마다 이 표의 자산 갱신을 추적
+runnability_assets_must_contain:
+  in_section: "## 7. 부팅 자산 (Runnability Assets)"
+  must_contain:
+    - { label: "환경 변수 템플릿", pattern: "(\\.env\\.(dev|stg|prod|example)|N/A)", severity: BLOCK, description: "ADR-0037 v1.1 — .env.dev.example·.env.stg.example·.env.prod.example 3종 또는 단일 .env.example 명시" }
+    - { label: "스키마 적용 (dev iteration)", pattern: "(db\\s*push|migrate\\s*dev|synchronize|create_all|hbm2ddl|ddl-auto|alembic\\s*(revision|upgrade)|N/A)", severity: BLOCK, description: "ADR-0037 v1.2 — dev 환경에서 빠른 schema→DB 동기 방식. Prisma `db push`/`migrate dev` · TypeORM `synchronize=true` · SQLAlchemy `create_all` · JPA(Hibernate) `ddl-auto=update` · Alembic `upgrade head` 등. migrate deploy 류는 *기존 migration 파일만* 적용하므로 dev 최초 부팅 시 빈 DB로 끝남 — 본 항목과 아래 'DB migrations (stg/prod release)' 분리 강제." }
+    - { label: "DB migrations (stg/prod release)", pattern: "(prisma/migrations|db/migrations|flyway|liquibase|alembic/versions|migrations/|N/A)", severity: BLOCK, description: "ADR-0037 v1.2 — 운영 release용 정식 migration 파일 디렉토리. stg/prod에서 `migrate deploy` · `flyway migrate` · `alembic upgrade head` 등으로 적용. dev에서는 위 '스키마 적용' 항목이 1차." }
+    - { label: "lockfile", pattern: "(pnpm-lock|package-lock|yarn\\.lock|Cargo\\.lock|go\\.sum|gradle\\.lockfile|poetry\\.lock|uv\\.lock|N/A)", severity: BLOCK }
+    - { label: "설치/seed scripts", required: true, severity: BLOCK }
+    - { label: "부팅 명령", required: true, severity: BLOCK, description: "ADR-0037 v1.1 — profile별 부팅 명령 각각 명시 (dev/stg/prod). 명령이 동일하면 환경 변수 전환 방식 명시." }
+    - { label: "LOCAL.md", pattern: "(LOCAL\\.md|루트 가이드)", severity: BLOCK, description: "ADR-0040 — newProject 루트 LOCAL.md를 부팅 자산 1종으로 명시. 본 §7과 LOCAL.md는 매 PR 동기 갱신." }
+  must_contain_table: true
+
+tables:
+  - in_section: "## 6. 환경 변수 / 설정 분리"
+    columns: [키, dev, stg, prod, "노출 위치"]
+    severity: BLOCK
+  - in_section: "## 7. 부팅 자산 (Runnability Assets)"
+    columns: [자산, "경로 (profile별)", "변경 trigger 이슈 유형", "갱신 책임"]
+    severity: BLOCK
+
+# ADR-0038: 스타일링 솔루션 선택 강제 — frontend layer 부재 시 N/A 명시
+styling_solution_must_contain:
+  in_section: "## 8. 스타일링 솔루션"
+  must_contain:
+    - { label: "솔루션", pattern: "(Tailwind|CSS Modules|styled-components|emotion|vanilla-extract|Sass|N/A)", severity: BLOCK }
+    - { label: "이유", required: true, severity: BLOCK }
+    - { label: "의존성", required: true, severity: BLOCK, description: "frontend/package.json devDependencies 추가 항목 또는 N/A" }
+    - { label: "entrypoint 적용", required: true, severity: BLOCK, description: "main.tsx 등에서 stylesheet import 경로 또는 N/A" }
+    - { label: "디자인 토큰 매핑", required: true, severity: BLOCK, description: "10-lld-screen-design §3 토큰 → 솔루션 위치 매핑 또는 N/A" }

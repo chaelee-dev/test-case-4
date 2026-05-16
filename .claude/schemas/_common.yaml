@@ -1,0 +1,75 @@
+# 공통 schema 조각 — 29종 doc_type schema가 참조하는 정의.
+# validate-doc.sh / scaffold-doc.sh가 이 파일을 먼저 로드한 뒤 doc_type별 schema를 병합한다.
+# 직접 수정 시 ADR 신설 권장(공통 frontmatter는 29종 모두에 영향).
+#
+# 분량/행 수 강제 정책 (schema 범위 밖):
+# - 라인 수 가드: settings.json hook의 .claude/scripts/check-line-count.sh
+#   * 가드 대상: 운영 문서만 (commands/harness/agents/CLAUDE/PLAN/USAGE/conventions/operations/adr/install)
+#   * 가드 외:   산출 문서 (01~15·docs/features/*·retro 등) — RFP/맥락에 따라 분량 자유
+#   * 정책:     WARN-only 300줄, 차단 없음
+# - 분할 위치/순번/INDEX.md: docs/planning/conventions/file-numbering.md
+# - doc_type별 권고 분량(정보성): ADR-0003 §2.2 + docs/planning/conventions/deliverables.md
+# - schema는 형식 골격(섹션·표 컬럼·ID 패턴·frontmatter)만 강제, 산출 분량(행 수·페이지 수)은 자유
+
+frontmatter_common:
+  doc_type:
+    required: true
+    severity: BLOCK
+    description: "본 문서의 doc_type. document-manifest.md §3 일람의 29종 중 1개"
+  version:
+    required: true
+    severity: BLOCK
+    pattern: "^v[0-9]+\\.[0-9]+( \\(Draft\\))?$"
+    description: "v0.X = Draft, v1.X+ = Accepted 후"
+  status:
+    required: true
+    severity: BLOCK
+    enum: [Draft, Accepted, Deprecated, Superseded]
+  author:
+    required: true
+    severity: BLOCK
+    pattern: "@"
+    description: "이메일 형식 (단일 책임자)"
+  date:
+    required: true
+    severity: BLOCK
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+  gate:
+    required: true
+    severity: BLOCK
+    enum: ["A", "B", "C", "feature", "operations", ""]
+  related:
+    required: true
+    severity: BLOCK
+    fields:
+      R-ID: { type: array, severity: WARN }
+      F-ID: { type: array, severity: WARN }
+      supersedes: { type: ["string", "null"], severity: WARN }
+
+id_patterns_common:
+  R-ID: "^R-[A-Z][A-Z0-9_-]*-[0-9]{2,}$"        # 예: R-AUTH-01, R-FE-PERF-01
+  F-ID: "^F-[A-Z][A-Z0-9_-]*$"                  # 예: F-AUTH-LOGIN, F-AUTH-01
+  UC-ID: "^UC-[0-9]{2,}$"                        # 예: UC-01
+  RISK-ID: "^(F-)?RISK-[0-9]{2,}$"               # 예: RISK-01, F-RISK-01
+  AC-ID: "^AC-[0-9]{2,}$"                        # 예: AC-01
+  ADR-NN: "^[0-9]{4}-[a-z][a-z0-9-]+\\.md$"      # ADR 파일명 패턴
+  Sprint: "^Sprint [0-9]+$"                      # 예: Sprint 1
+  Effort: "^(0\\.5|1|2|3)d$"                     # ADR-0008 §2.3
+
+severity_meaning:
+  BLOCK: "schema 위반 — validate-doc.sh exit 2, /plan-eng-review BLOCKED"
+  WARN:  "권고 위반 — stderr 경고, 차단 없음"
+  INFO:  "안내 — 정상 출력, 검증 통과"
+
+version_history:
+  required: true
+  severity: BLOCK
+  position: "leading"                        # ADR-0019 — sections[0], H1 직후
+  heading_pattern: "^## 변경 이력$"          # 번호 없음 강제 (## 6. 변경 이력 등 금지)
+  must_contain_table: true
+  table_columns: [Version, Date, Author, Change]
+  min_rows: 1                                # 최소 1행. 빈 표 금지
+  frontmatter_sync:                          # ADR-0019 — frontmatter ↔ 표 첫 데이터 행 정합
+    version: BLOCK                           # frontmatter.version == 표 첫 데이터 행의 Version 컬럼
+    date: BLOCK                              # frontmatter.date    == 표 첫 데이터 행의 Date 컬럼
+  # 행 수 강제 없음 — 컬럼 형식만 검증, 내용 분량은 RFP/맥락에 따라 자유

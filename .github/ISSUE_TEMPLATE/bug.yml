@@ -1,0 +1,67 @@
+name: Bug Report
+description: 버그 보고
+title: "fix(<area>): <summary>"
+labels: ["type:bug", "status:todo"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > 제목 형식: `fix(<area>): <summary>` (Conventional Commits 스타일, ADR-0021).
+        > 가이드: [`docs/install/github-issue-guide.md`](../docs/install/github-issue-guide.md).
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 재현 단계 / 현재 동작
+      value: |
+        1.
+        2.
+        3.
+        - 현재 동작:
+        - 기대 동작:
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      value: |
+        - [ ] AC-01: 버그 재현 시나리오에서 정상 동작 확인
+        - [ ] AC-02: 회귀 테스트 추가
+    validations:
+      required: true
+
+  - type: textarea
+    id: contract
+    attributes:
+      label: Contract Before / After
+      value: |
+        - Before: (버그 동작)
+        - After: (수정 후 동작)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated Effort
+      options:
+        - 0.5d
+        - 1d
+        - 2d
+        - 3d
+    validations:
+      required: true
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: DoD Checklist
+      value: |
+        - [ ] 재현 케이스 회귀 테스트 추가
+        - [ ] AI 게이트 PASS
+        - [ ] 휴먼 게이트 PASS
+        - [ ] 머지 → 이슈 close
+    validations:
+      required: true

@@ -1,0 +1,105 @@
+# STAGED CI workflow template (ADR-0017 carry-over, ADR-0037 v1.1 + ADR-0040 정합).
+#
+# 도입 절차 (newProject 루트에서):
+#   1. gh CLI에 workflow scope 부여 (첫 1회):
+#        gh auth refresh -s workflow
+#   2. staged → active 이동:
+#        mkdir -p .github/workflows
+#        git mv docs/install/ci.yml.template .github/workflows/ci.yml
+#   3. newProject 스택에 맞춰 'test' · 'boot-smoke' job의 # TODO 부분 채움
+#   4. 커밋 + push
+#
+# 사전 제공 job (스택 무관):
+#   - local-md-sync : LOCAL.md 구조 + profile 3분기 + 부팅 자산 lint
+#                     (docs/install/scripts/check-local-md-sync.sh 호출 — install.sh가 newProject scripts/로 카피)
+#
+# 도입자 채움 job (skeleton 포함):
+#   - test       : 단위/통합 테스트 (스택별 install + run 명령)
+#   - boot-smoke : 3 profile matrix 부팅 검증 (ADR-0037 v1.1 강제)
+#                  부팅 명령은 12-scaffolding §5 / LOCAL.md §3의 native script 사용
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # ─── (사전 제공) LOCAL.md 동기 lint ─────────────────────────
+  local-md-sync:
+    name: LOCAL.md 구조 + profile 3분기 lint (ADR-0040)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run LOCAL.md sync lint
+        run: bash scripts/check-local-md-sync.sh
+
+  # ─── (도입자 채움) 단위/통합 테스트 ──────────────────────────
+  test:
+    name: typecheck + test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # TODO: 스택별 setup
+      # Node 예시:
+      #   - uses: pnpm/action-setup@v4
+      #     with: { version: 9 }
+      #   - uses: actions/setup-node@v4
+      #     with: { node-version: '20', cache: 'pnpm' }
+      # Java 예시:
+      #   - uses: actions/setup-java@v4
+      #     with: { distribution: 'temurin', java-version: '21', cache: 'gradle' }
+      # Python 예시:
+      #   - uses: astral-sh/setup-uv@v3
+      #     with: { python-version: '3.12' }
+
+      # TODO: install + typecheck + test (12-scaffolding §5 / LOCAL.md §3 명령)
+      #   - run: pnpm install --frozen-lockfile
+      #   - run: pnpm typecheck
+      #   - run: pnpm test
+      - run: echo "TODO — replace with stack-specific install/typecheck/test commands"
+
+  # ─── (도입자 채움) 3 profile 부팅 smoke ──────────────────────
+  # ADR-0037 v1.1: 매 PR 부팅 검증 6번째 축. 단일 환경 운영(stg=prod 공유)은 matrix 줄여 허용.
+  boot-smoke:
+    name: 3-profile boot smoke (ADR-0037 v1.1)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [dev, stg, prod]
+    # TODO: DB 의존이 있으면 services 블록 채움 (Postgres 예시는 docs/install/ci.yml.template
+    #       원본 주석 또는 GitHub Actions docs 참조)
+    steps:
+      - uses: actions/checkout@v4
+
+      # TODO: 스택별 setup (위 'test' job과 동일 패턴)
+
+      # TODO: env 준비 — root .env.${{ matrix.profile }}.example을 .env.${{ matrix.profile }}로
+      #       복사 + CI용 시크릿 치환 (DB URL · JWT_SECRET 등)
+      #   - run: cp .env.${{ matrix.profile }}.example .env.${{ matrix.profile }}
+
+      # TODO: 의존성 설치 + 스키마 적용 (dev iteration용 db push 또는 migrate dev)
+      #   - run: pnpm install --frozen-lockfile
+
+      # TODO: profile별 부팅 명령 + ready 신호 폴링 (12-scaffolding §5 / LOCAL.md §3 참조)
+      # 부팅 검증 예시 (curl health endpoint 폴링, 30초 timeout):
+      #   - name: Boot ${{ matrix.profile }} + health check
+      #     run: |
+      #       <부팅 명령 from LOCAL.md §3.${{ matrix.profile == 'dev' && '1' || matrix.profile == 'stg' && '2' || '3' }}> &
+      #       PID=$!
+      #       for i in $(seq 1 30); do
+      #         if curl -fsS http://localhost:3000/health >/dev/null 2>&1; then
+      #           echo "✅ ready on profile=${{ matrix.profile }}"
+      #           kill $PID || true
+      #           exit 0
+      #         fi
+      #         sleep 1
+      #       done
+      #       echo "❌ did not become ready"
+      #       kill $PID || true
+      #       exit 1
+      - run: echo "TODO — replace with profile=${{ matrix.profile }} boot + readiness check (ADR-0037 v1.1)"

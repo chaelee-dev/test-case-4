@@ -1,0 +1,29 @@
+doc_type: user-scenarios
+extends: _common
+title_pattern: "^# .+ — 사용자 시나리오"
+gate_value: B
+
+frontmatter:
+  doc_type: { value: user-scenarios }
+  gate: { value: B }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 페르소나", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 2. 사용자 여정 (큰 그림)", required: true, severity: BLOCK }
+  - { heading: "## 3. Use Case", required: true, severity: BLOCK }
+  - { heading: "## 4. 비기능 시나리오", required: true, severity: WARN }
+  - { heading: "## 5. Open Questions", required: false, severity: INFO }
+
+tables:
+  - in_section: "## 1. 페르소나"
+    columns: [페르소나, 역할, "환경 / 컨텍스트", "주요 목표"]
+    severity: BLOCK
+
+subsection_patterns:
+  - parent: "## 3. Use Case"
+    pattern: "^### UC-[0-9]{2,}: .+$"
+    severity: BLOCK
+
+id_required:
+  - UC-ID

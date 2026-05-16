@@ -1,0 +1,33 @@
+doc_type: architecture
+extends: _common
+title_pattern: "^# .+ — System Architecture$"
+gate_value: C
+
+# ADR-0031: 06이 Architecture 본체로 축소. 모듈 분해·데이터 흐름·비기능 대응은 07 HLD로 이전.
+
+frontmatter:
+  doc_type: { value: architecture }
+  gate: { value: C }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0], 번호 제거
+  - { heading: "## Stack Decision", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 1. 시스템 컨텍스트", required: true, severity: BLOCK }
+  - { heading: "## 2. 컨테이너 구조", required: true, severity: BLOCK }
+  - { heading: "## 3. 외부 시스템 / 경계", required: false, severity: INFO }
+
+tables:
+  - in_section: "## Stack Decision"
+    columns: [항목, 결정, 근거]
+    severity: BLOCK
+    description: "단계 ① 언어 + ② 프레임워크 명시 강제 (foldering-rules §3)"
+
+id_required:
+  - R-ID
+
+stack_decision_must_contain:
+  in_section: "## Stack Decision"
+  required_rows:
+    - 언어
+    - 프레임워크
+  severity: BLOCK

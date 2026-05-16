@@ -1,0 +1,58 @@
+doc_type: feature-contract
+extends: _common
+title_pattern: "^# .+ — Change Contract"
+gate_value: feature
+filename_pattern: "^(feat|mod|bug|design)-[a-z0-9-]+\\.contract\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-contract }
+  gate: { value: feature }
+
+# ADR-0018: §0 Referenced-IDs를 최상단 BLOCK으로 추가. 기존 §6 R-ID/F-ID 매핑은 §0으로 통합·확장.
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 0. 참조 정본 ID (Referenced-IDs)", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 1. 변경 의도", required: true, severity: BLOCK }
+  - { heading: "## 2. Before / After", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 3. 호출자·의존자 (Call Sites)", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 4. Backward Compatibility", required: true, severity: BLOCK }
+  - { heading: "## 5. Rollback 전략", required: true, severity: BLOCK }
+  - { heading: "## 6. 비목표", required: true, severity: WARN }
+
+backward_compat_must_contain:
+  in_section: "## 4. Backward Compatibility"
+  must_contain:
+    - { label: "Breaking", pattern: "(yes|no)", severity: BLOCK }
+    - { label: "마이그레이션 필요", pattern: "(yes|no)", severity: BLOCK }
+
+rollback_must_contain:
+  in_section: "## 5. Rollback 전략"
+  must_contain:
+    - { label: "revert 가능", pattern: "(yes|no)", severity: BLOCK }
+    - { label: "rollback 절차", required: true, severity: BLOCK }
+    - { label: "데이터 손상 위험", required: true, severity: BLOCK }
+
+# ADR-0018: §0 표의 5행 강제. R-ID는 BLOCK pattern, F-ID는 WARN, 나머지 3행은 라벨 존재 BLOCK.
+# 영향 ID 컬럼이 비어있으면 "(none)"으로 명시 (mode=bug, docs-only modify, design 등에서 자연 사용).
+referenced_ids_must_contain:
+  in_section: "## 0. 참조 정본 ID (Referenced-IDs)"
+  must_contain:
+    - { label: "R-ID (요구)", pattern: "R-", severity: BLOCK }
+    - { label: "F-ID (기능)", required: true, severity: WARN }
+    - { label: "영향 모듈", required: true, severity: BLOCK }
+    - { label: "영향 엔드포인트", required: true, severity: BLOCK }
+    - { label: "적용 컨벤션 절", required: true, severity: BLOCK }
+
+tables:
+  - in_section: "## 0. 참조 정본 ID (Referenced-IDs)"
+    columns: [종류, 정본 위치, 영향 ID]
+    severity: BLOCK
+  - in_section: "## 2. Before / After"
+    columns: [항목, Before, After]
+    severity: BLOCK
+  - in_section: "## 3. 호출자·의존자 (Call Sites)"
+    columns: [위치, 영향, 조치]
+    severity: BLOCK
+
+id_required:
+  - R-ID

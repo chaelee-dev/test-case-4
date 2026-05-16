@@ -1,0 +1,35 @@
+doc_type: adr
+extends: _common
+title_pattern: "^# ADR [0-9]{4} — .+$"
+gate_value: C
+filename_pattern: "^[0-9]{4}-[a-z][a-z0-9-]+\\.md$"
+
+frontmatter:
+  doc_type: { value: adr }
+  gate: { value: C }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 1. 컨텍스트", required: true, severity: BLOCK }
+  - { heading: "## 2. 결정", required: true, severity: BLOCK }
+  - { heading: "## 3. 검토된 대안", required: true, severity: BLOCK }
+  - { heading: "## 4. 결과 (Consequences)", required: true, severity: BLOCK }
+  - { heading: "## 5. 추적 / 재검토 시점", required: true, severity: WARN }
+
+subsection_patterns:
+  - parent: "## 3. 검토된 대안"
+    pattern: "^### (대안|채택안)"
+    severity: BLOCK
+
+consequences_must_contain:
+  in_section: "## 4. 결과 (Consequences)"
+  required_subsections:
+    - "### 긍정"
+    - "### 부정 / 트레이드오프"
+    - "### 영향 받는 문서"
+  severity: WARN
+
+header_must_contain:
+  - { label: "**상태**", pattern: "(Draft|Accepted|Deprecated|Superseded)", severity: BLOCK }
+  - { label: "**결정일**", pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}", severity: BLOCK }
+  - { label: "**작성**", pattern: "@", severity: BLOCK }

@@ -1,0 +1,69 @@
+name: Feature / Change Request
+description: 새 기능 추가 또는 기존 기능 변경
+title: "feat(<area>): <summary>"
+labels: ["type:feature", "status:todo"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > 제목 형식: `feat(<area>): <summary>` (Conventional Commits 스타일, ADR-0021).
+        > 가이드: [`docs/install/github-issue-guide.md`](../docs/install/github-issue-guide.md).
+        > 영역 3개 이상이면 `feat(multi):` + 본문 끝에 `## Touched Areas` 표 추가.
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: 완료 조건 체크박스 (AC-XX 식별자)
+      value: |
+        - [ ] AC-01:
+        - [ ] AC-02:
+    validations:
+      required: true
+
+  - type: textarea
+    id: contract
+    attributes:
+      label: Contract Before / After
+      description: 현재 동작 → 변경 후 동작
+      value: |
+        - Before:
+        - After:
+    validations:
+      required: true
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated Effort
+      description: WBS 권장 (1~3 working days)
+      options:
+        - 0.5d
+        - 1d
+        - 2d
+        - 3d
+    validations:
+      required: true
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: DoD Checklist
+      value: |
+        - [ ] 코드 작성
+        - [ ] 단위/통합 테스트 통과
+        - [ ] AI 게이트(qa-test --ai) PASS
+        - [ ] 휴먼 게이트(tested 라벨 + Approve) PASS
+        - [ ] 머지 → 이슈 close
+    validations:
+      required: true
+
+  - type: textarea
+    id: touched_areas
+    attributes:
+      label: Touched Areas (멀티 모듈일 때만)
+      description: 영역 3개 이상(`area:multi`)일 때 강제. 2개일 때 권고.
+      value: |
+        | Area | 변경 성격 | 리뷰어 |
+        |---|---|---|
+        |  |  |  |

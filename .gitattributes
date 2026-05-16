@@ -1,0 +1,42 @@
+# Cross-platform line ending policy (ADR-0017 v1.2 — WSL/Linux 호환성)
+#
+# 본 프로젝트의 셸 스크립트는 newProject 도입 후 WSL/Linux/macOS bash가 실행한다.
+# Windows 체크아웃에서 core.autocrlf=true 가 .sh 파일을 CRLF 로 변환하면
+# `#!/usr/bin/env bash\r` 가 되어 즉시 실패한다. 본 파일이 이를 영구 차단한다.
+
+# ─── 텍스트 자동 감지 (기본값) ─────────────────────
+* text=auto
+
+# ─── LF 강제 (POSIX 쉘이 실행하는 파일들) ──────────
+*.sh           text eol=lf
+*.bash         text eol=lf
+scripts/devkit.template text eol=lf
+
+# ─── LF 강제 (크로스플랫폼 설정·구조 파일) ─────────
+*.yml          text eol=lf
+*.yaml         text eol=lf
+*.json         text eol=lf
+*.md           text eol=lf
+*.toml         text eol=lf
+Makefile       text eol=lf
+.editorconfig  text eol=lf
+.gitattributes text eol=lf
+.gitignore     text eol=lf
+
+# ─── CRLF 강제 (Windows 전용) ─────────────────────
+*.ps1          text eol=crlf
+*.bat          text eol=crlf
+*.cmd          text eol=crlf
+
+# ─── 바이너리 (변환 금지) ──────────────────────────
+*.png          binary
+*.jpg          binary
+*.jpeg         binary
+*.gif          binary
+*.webp         binary
+*.ico          binary
+*.pdf          binary
+*.zip          binary
+*.tar.gz       binary
+*.woff         binary
+*.woff2        binary

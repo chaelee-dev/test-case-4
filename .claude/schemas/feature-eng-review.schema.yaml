@@ -1,0 +1,33 @@
+doc_type: feature-eng-review
+extends: _common
+title_pattern: "^# .+ — Engineering Review"
+gate_value: feature
+filename_pattern: "^(feat|mod|bug|design)-[a-z0-9-]+\\.eng-review\\.md$"
+
+frontmatter:
+  doc_type: { value: feature-eng-review }
+  gate: { value: feature }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0]
+  - { heading: "## 0. Verdict", required: true, severity: BLOCK }
+  - { heading: "## 1. Contract 검토", required: true, severity: BLOCK }
+  - { heading: "## 2. Plan 검토", required: true, severity: BLOCK }
+  - { heading: "## 3. UX 검토", required: false, severity: INFO }
+  - { heading: "## 4. 6단계 폴더링 충족", required: false, severity: INFO }
+  - { heading: "## 5. frontmatter / Manifest 검증", required: true, severity: BLOCK }
+  - { heading: "## 6. 발견 사항 (3축 OX)", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 7. NEEDS-WORK 항목", required: false, severity: INFO }
+
+verdict_must_contain:
+  in_section: "## 0. Verdict"
+  must_contain:
+    - { label: "verdict", pattern: "(PASS|NEEDS-WORK|FAIL)", severity: BLOCK }
+    - { label: "reviewer", pattern: "@", severity: BLOCK }
+    - { label: "review_at", pattern: "[0-9]{4}-[0-9]{2}-[0-9]{2}", severity: BLOCK }
+
+tables:
+  - in_section: "## 6. 발견 사항 (3축 OX)"
+    columns: [Q, 답, 처리]
+    severity: BLOCK
+    description: "ADR-0008 3축 OX 게이트"

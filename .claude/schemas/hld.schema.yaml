@@ -1,0 +1,30 @@
+doc_type: hld
+extends: _common
+title_pattern: "^# .+ — High-Level Design \\(HLD\\)"
+gate_value: C
+
+# ADR-0031: 신설 — 06 Architecture에서 분리. 모듈 분해 + 모듈 간 데이터 흐름 + 비기능 대응을 본 doc_type이 담는다.
+# 08 Module Spec(LLD)이 본 HLD §1 모듈 표의 fan-out으로 정합 강제 (module-spec.schema.yaml 참조).
+
+frontmatter:
+  doc_type: { value: hld }
+  gate: { value: C }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0], 번호 제거
+  - { heading: "## 1. 핵심 모듈 / 컴포넌트", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 2. 모듈 간 데이터 흐름", required: true, severity: BLOCK }
+  - { heading: "## 3. 비기능 대응", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 4. 외부 인터페이스 윤곽", required: false, severity: INFO }
+
+tables:
+  - in_section: "## 1. 핵심 모듈 / 컴포넌트"
+    columns: [모듈, 책임, 의존, "08에서 상세"]
+    severity: BLOCK
+    description: "HLD 단계의 모듈 분해 강제 — 식별된 모듈은 08 Module Spec에서 fan-out (ADR-0031)"
+  - in_section: "## 3. 비기능 대응"
+    columns: ["비기능 R-ID", "대응 전략", 상세]
+    severity: BLOCK
+
+id_required:
+  - R-ID

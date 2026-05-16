@@ -1,0 +1,130 @@
+doc_type: test-design
+extends: _common
+title_pattern: "^# .+ — Test Design"
+gate_value: C
+
+# 분할 정책 (ADR-0014 §2.3 권고 → ADR-0030 자동 골격화 → ADR-0034 sub-file 본문 BLOCK):
+# scaffold-doc.sh가 OUT_PATH가 디렉토리이고 folder_split.enabled=true이면
+# 아래 subfiles 5종을 자동 골격으로 일괄 생성한다.
+# - 폴더 경로: bash scaffold-doc.sh test-design docs/planning/13-test-design/
+# - 단일 파일(기존): bash scaffold-doc.sh test-design docs/planning/13-test-design/13-test-design.md
+# ADR-0034: 각 sub-file에 must_contain·subsection_patterns·tables BLOCK 신설로
+# 빈 골격이 게이트 C를 통과하는 갭 차단. validate-doc.sh sub-file 분기가 본 BLOCK을 검증.
+folder_split_recommended: true
+folder_split:
+  enabled: true
+  subfiles:
+    - slug: "01-strategy"
+      title: "Test Strategy"
+      sections:
+        - "## 1. 방법론 (TDD/BDD)"
+        - "## 2. 도구 선택"
+        - "## 3. 커버리지 목표 (≥ 80%)"
+      # ADR-0034: 메인 schema의 strategy_must_contain을 sub-file로 이전
+      must_contain:
+        - { label: "방법론", pattern: "(TDD|BDD|비-TDD)", severity: BLOCK }
+        - { label: "레벨", pattern: "(단위|통합|E2E)", severity: BLOCK }
+        - { label: "커버리지 목표", pattern: "(8[0-9]|9[0-9]|100)%", severity: BLOCK, description: "ADR-0015 §2.3 — 최소 80%" }
+    - slug: "02-catalog"
+      title: "Test Scenario Catalog (단위·통합·E2E 별 묶음)"
+      # ADR-0036: sections를 R-/F- 그룹핑 → 레벨 그룹핑으로 재편. R-/F- subsection은 각 레벨 섹션 안에 위치.
+      sections:
+        - "## 1. 단위 테스트 카탈로그"
+        - "## 2. 통합 테스트 카탈로그"
+        - "## 3. E2E 테스트 카탈로그"
+        - "## 4. 레벨 매트릭스 (단위·통합·E2E)"
+      # ADR-0034: 메인 schema의 subsection_patterns + scenario_fanin_must_contain + 카탈로그 tables를 sub-file로 이전
+      subsection_patterns:
+        - { pattern: "^### (R-|F-)", min_count: 1, severity: BLOCK, description: "R-/F-ID fan-in 최소 1건 — 04 SRS·05 PRD 시나리오 인용 (레벨 섹션 내부 어디든)" }
+      must_contain_in_subsection:
+        - { in_subsection_pattern: "^### (R-|F-)", label: "출처", pattern: "(04#R-|05#F-)", severity: BLOCK, description: "각 시나리오는 상류 04·05 ID 인용" }
+        - { in_subsection_pattern: "^### (R-|F-)", label: "테스트 레벨", pattern: "(단위|통합|E2E)", severity: BLOCK }
+      tables:
+        # ADR-0036: 매트릭스 위치 §3 → §4 (레벨 섹션 3개를 §1~§3에 신설)
+        - in_section: "## 4. 레벨 매트릭스 (단위·통합·E2E)"
+          forbidden_cells: ["❌"]
+          severity: BLOCK
+          description: "ADR-0023 — 미작성 ❌ 금지, ✅(적용) 또는 N/A(부적합)만 허용"
+    - slug: "03-regression"
+      title: "Regression Test Policy"
+      sections:
+        - "## 1. 회귀 범위"
+        - "## 2. 자동화 정책"
+        - "## 3. 회귀 트리거"
+      # ADR-0030 §150 + ADR-0034: 도메인 자유 — 본문 BLOCK 없음
+    - slug: "04-performance"
+      title: "Performance & Security Tests"
+      sections:
+        - "## 1. 성능 테스트"
+        - "## 2. 보안 테스트"
+        - "## 3. 도구·시점"
+      # ADR-0030 §150 + ADR-0034: 도메인 자유 — 본문 BLOCK 없음
+    - slug: "05-delivery-format"
+      title: "Customer Delivery Format"
+      sections:
+        - "## 1. 산출 범위 (단위·통합·E2E 시나리오)"
+        - "## 2. 포맷·도구 (HTML/XLSX/Allure 등)"
+        - "## 3. 시나리오 ID 채번 규칙"
+        - "## 4. 전달 시점 (스프린트 종료·릴리스·고객 요청)"
+      # ADR-0034: 고객 납품 양식 특수성 — ID 채번 + 전달 시점 2축 BLOCK
+      must_contain:
+        - { label: "시나리오 ID 채번", pattern: "(TC-|SC-|UC-|IT-|E2E-)", severity: BLOCK, in_section: "## 3. 시나리오 ID 채번 규칙", description: "고객 납품용 ID prefix 정의 필수" }
+        - { label: "전달 시점", pattern: "(스프린트 종료|릴리스|고객 요청)", severity: BLOCK, in_section: "## 4. 전달 시점 (스프린트 종료·릴리스·고객 요청)" }
+
+frontmatter:
+  doc_type: { value: test-design }
+  gate: { value: C }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0], 번호 제거
+  - { heading: "## 1. 테스트 전략", required: true, severity: BLOCK }
+  - { heading: "## 2. 도구 선택", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 3. 시나리오 카탈로그", required: true, severity: BLOCK }
+  - { heading: "## 4. D-06 게이트 정합", required: true, severity: BLOCK }
+  - { heading: "## 5. 회귀 테스트 정책", required: true, severity: WARN }
+  - { heading: "## 6. 성능·보안 테스트", required: true, severity: WARN, must_contain_table: true }
+
+# ADR-0034: 본 블록은 단일 파일 모드(legacy)에만 적용. 폴더 분할 모드는
+# folder_split.subfiles[slug=01-strategy].must_contain에서 동일 규칙을 BLOCK 검증.
+strategy_must_contain:
+  in_section: "## 1. 테스트 전략"
+  must_contain:
+    - { label: "방법론", pattern: "(TDD|BDD|비-TDD)", severity: BLOCK }
+    - { label: "레벨", pattern: "(단위|통합|E2E)", severity: BLOCK }
+    - { label: "커버리지 목표", pattern: "(8[0-9]|9[0-9]|100)%", severity: BLOCK, description: "ADR-0015 §2.3 — 최소 80% 이상 명시. 80~100% 범위만 통과. 분야별 예외는 ADR 신설로" }
+
+tables:
+  - in_section: "## 2. 도구 선택"
+    columns: [레벨, 도구, 이유]
+    severity: BLOCK
+  - in_section: "## 3. 시나리오 카탈로그"
+    columns: ["ID(R-/F-)", 단위, 통합, E2E, 비고]
+    severity: BLOCK
+    description: "ADR-0015 §2.4 + ADR-0023 — 레벨 매트릭스. R-/F- 1개당 1행. 각 레벨 컬럼은 ✅(작성) 또는 N/A(부적합)만 허용. ❌(미작성) 금지 — 미결정 회피"
+    cell_constraints:
+      - columns: [단위, 통합, E2E]
+        forbidden: ["❌"]
+        severity: BLOCK
+        description: "ADR-0023 — 각 R-/F-ID는 모든 테스트 레벨을 명시적으로 결정해야 한다. ❌(미작성) 셀 금지. 적용=✅, 부적합=N/A로 결정"
+  - in_section: "## 6. 성능·보안 테스트"
+    columns: [종류, 도구, 시점, R-ID]
+    severity: WARN
+
+# ADR-0034: 본 블록은 단일 파일 모드(legacy)에만 적용. 폴더 분할 모드는
+# folder_split.subfiles[slug=02-catalog]의 subsection_patterns + must_contain_in_subsection에서 검증.
+subsection_patterns:
+  - parent: "## 3. 시나리오 카탈로그"
+    pattern: "^### (R-|F-)"
+    severity: BLOCK
+    description: "04 SRS·05 PRD의 R-ID/F-ID별 시나리오 fan-in (ADR-0003 §2.4). 04·05 schema가 v0.7.8부터 R-ID/F-ID별 '테스트 시나리오'를 BLOCK으로 강제하므로, 12에서는 누락 보강이 아닌 **종합·전략 결정**에 집중"
+
+# ADR-0034: 본 블록은 단일 파일 모드(legacy)에만 적용. 폴더 분할 모드는 위 02-catalog 블록 참조.
+scenario_fanin_must_contain:
+  in_subsection_pattern: "^### (R-|F-)"
+  must_contain:
+    - { label: "출처", pattern: "(04#R-|05#F-)", severity: BLOCK, description: "각 시나리오는 상류 04 SRS R-ID 또는 05 PRD F-ID 절을 인용해야 함" }
+    - { label: "테스트 레벨", pattern: "(단위|통합|E2E)", severity: BLOCK }
+
+id_required:
+  - R-ID
+  - F-ID

@@ -1,0 +1,30 @@
+doc_type: runbook
+extends: _common
+title_pattern: "^# .+ — RUNBOOK"
+gate_value: operations
+
+frontmatter:
+  doc_type: { value: runbook }
+  gate: { value: operations }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0], 번호 제거
+  - { heading: "## 1. 세션 시작", required: true, severity: BLOCK }
+  - { heading: "## 2. flow-state.yaml 스키마", required: true, severity: BLOCK }
+  - { heading: "## 3. 컨텍스트 위생 휴리스틱", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 4. gh-cli fallback", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 5. 세션 종료", required: true, severity: BLOCK }
+  - { heading: "## 6. 트러블슈팅 FAQ", required: true, severity: WARN }
+
+tables:
+  - in_section: "## 3. 컨텍스트 위생 휴리스틱"
+    columns: [상황, 권장]
+    severity: BLOCK
+  - in_section: "## 4. gh-cli fallback"
+    columns: [상황, 영향, 조치]
+    severity: BLOCK
+
+subsection_patterns:
+  - parent: "## 6. 트러블슈팅 FAQ"
+    pattern: "^### Q[0-9]+\\."
+    severity: WARN

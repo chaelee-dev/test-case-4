@@ -1,0 +1,39 @@
+doc_type: module-spec
+extends: _common
+title_pattern: "^# .+ — Module Spec \\(LLD — 모듈/통신\\)"
+gate_value: C
+
+frontmatter:
+  doc_type: { value: module-spec }
+  gate: { value: C }
+
+sections:
+  - { heading: "## 변경 이력", required: true, severity: BLOCK }              # ADR-0019 — sections[0], 번호 제거
+  - { heading: "## 1. 모듈 개요", required: true, severity: BLOCK }
+  - { heading: "## 2. 외부 인터페이스", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 3. 내부 컴포넌트", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 4. 데이터 흐름", required: true, severity: BLOCK }
+  - { heading: "## 5. 상태·라이프사이클", required: false, severity: WARN }
+  - { heading: "## 6. 에러 처리", required: true, severity: BLOCK, must_contain_table: true }
+  - { heading: "## 7. 동시성·트랜잭션", required: false, severity: INFO }
+  - { heading: "## 8. 테스트 진입점", required: true, severity: BLOCK, must_contain_table: true }
+
+module_overview_must_contain:
+  in_section: "## 1. 모듈 개요"
+  must_contain:
+    - { label: "모듈 ID", required: true, severity: BLOCK }
+    - { label: "책임", required: true, severity: BLOCK }
+    - { label: "07 HLD §1 참조", required: true, severity: BLOCK, description: "본 모듈이 07 HLD §1 핵심 모듈/컴포넌트 표의 어느 행에서 fan-out 되었는지 명시 (HLD↔LLD trace, ADR-0031)" }
+    - { label: "R-ID 매핑", pattern: "R-", severity: BLOCK }
+    - { label: "F-ID 매핑", pattern: "F-", severity: WARN }
+
+tables:
+  - in_section: "## 2. 외부 인터페이스"
+    columns: [인터페이스, 입력, 출력, 에러]
+    severity: BLOCK
+  - in_section: "## 6. 에러 처리"
+    columns: [에러, "발생 조건", 처리]
+    severity: BLOCK
+
+id_required:
+  - R-ID
