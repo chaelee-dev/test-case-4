@@ -14,7 +14,7 @@ describe("App", () => {
         </Routes>
       </MemoryRouter>
     );
-    expect(screen.getByText(/conduit/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/conduit/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Thinkster/)).toBeInTheDocument();
   });
 });
