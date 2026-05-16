@@ -3,11 +3,13 @@ package com.conduit.article;
 import java.security.SecureRandom;
 import java.text.Normalizer;
 import java.util.regex.Pattern;
+import org.springframework.stereotype.Component;
 
 /**
  * Conduit-spec slug: kebab-case(title), fallback "untitled" for non-ascii, plus 6-char nanoid
  * suffix on collision. SecureRandom-backed alphabet 36ch (a-z + 0-9).
  */
+@Component
 public final class SlugGenerator {
 
     private static final Pattern NON_ASCII = Pattern.compile("[^a-z0-9]+");
