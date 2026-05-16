@@ -1,0 +1,59 @@
+# Conduit — local docker-compose with three Postgres containers per ADR-0037 v1.1.
+# Each profile (dev/stg/prod) listens on its own port so all three can co-exist for boot validation.
+
+services:
+  postgres-dev:
+    image: postgres:16-alpine
+    container_name: conduit-postgres-dev
+    environment:
+      POSTGRES_DB: conduit_dev
+      POSTGRES_USER: conduit
+      POSTGRES_PASSWORD: conduit
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U conduit -d conduit_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  postgres-stg:
+    image: postgres:16-alpine
+    container_name: conduit-postgres-stg
+    environment:
+      POSTGRES_DB: conduit_stg
+      POSTGRES_USER: conduit_stg
+      POSTGRES_PASSWORD: ${STG_DB_PASSWORD:-stg_local_only_change_me}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-stg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U conduit_stg -d conduit_stg"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  postgres-prod:
+    image: postgres:16-alpine
+    container_name: conduit-postgres-prod
+    environment:
+      POSTGRES_DB: conduit_prod
+      POSTGRES_USER: conduit_prod
+      POSTGRES_PASSWORD: ${PROD_DB_PASSWORD:-prod_local_only_change_me}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-prod-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U conduit_prod -d conduit_prod"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres-dev-data:
+  postgres-stg-data:
+  postgres-prod-data:

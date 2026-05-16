@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5434/conduit_prod}
+    username: ${DB_USER:conduit_prod}
+    password: ${DB_PASSWORD}
+  flyway:
+    enabled: true
+    locations: classpath:db/migrations
+
+logging:
+  level:
+    root: WARN
+    com.conduit: INFO
+
+conduit:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://app.example.com}
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-hours: ${JWT_EXPIRATION_HOURS:168}
