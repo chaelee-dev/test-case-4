@@ -23,14 +23,18 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-    // Reserved for I-02+ (kept commented to keep bootstrap minimal)
+    // Security + JWT (Issue #2)
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+
+    // Reserved for I-04+
     // implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    // implementation("org.springframework.boot:spring-boot-starter-security")
-    // implementation("io.jsonwebtoken:jjwt-api:0.12.6")
-    // runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
-    // runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     // implementation("org.commonmark:commonmark:0.22.0")
     // implementation("org.jsoup:jsoup:1.18.1")
+
+    testImplementation("org.springframework.security:spring-security-test")
 
     // Database — Flyway baseline only for bootstrap; entities arrive in I-04+
     runtimeOnly("org.postgresql:postgresql")
