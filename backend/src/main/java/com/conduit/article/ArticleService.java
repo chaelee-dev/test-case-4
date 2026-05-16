@@ -113,6 +113,30 @@ public class ArticleService {
     }
 
     @Transactional
+    public ArticleDto favorite(long actorId, String slug) {
+        Article article = articleRepository.findBySlug(slug).orElseThrow(() -> AppException.notFound("article"));
+        if (!favoriteRepository.existsByUserAndArticle(actorId, article.getId())) {
+            try {
+                favoriteRepository.save(new Favorite(actorId, article.getId()));
+                article.incrementFavorites();
+            } catch (org.springframework.dao.DataIntegrityViolationException race) {
+                // already favorited in concurrent request — idempotent
+            }
+        }
+        return enrich(article, actorId);
+    }
+
+    @Transactional
+    public ArticleDto unfavorite(long actorId, String slug) {
+        Article article = articleRepository.findBySlug(slug).orElseThrow(() -> AppException.notFound("article"));
+        if (favoriteRepository.existsByUserAndArticle(actorId, article.getId())) {
+            favoriteRepository.removeIfExists(actorId, article.getId());
+            article.decrementFavorites();
+        }
+        return enrich(article, actorId);
+    }
+
+    @Transactional
     public void delete(long actorId, String slug) {
         Article article = articleRepository.findBySlug(slug).orElseThrow(() -> AppException.notFound("article"));
         if (article.getAuthor().getId() != actorId) {

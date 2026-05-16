@@ -96,4 +96,18 @@ public class ArticleController {
         articleService.delete(viewerId, slug);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{slug}/favorite")
+    public ResponseEntity<ArticleResponse> favorite(
+            @PathVariable String slug, @AuthenticationPrincipal Long viewerId) {
+        if (viewerId == null) throw AppException.unauthorized("is invalid");
+        return ResponseEntity.ok(new ArticleResponse(articleService.favorite(viewerId, slug)));
+    }
+
+    @DeleteMapping("/{slug}/favorite")
+    public ResponseEntity<ArticleResponse> unfavorite(
+            @PathVariable String slug, @AuthenticationPrincipal Long viewerId) {
+        if (viewerId == null) throw AppException.unauthorized("is invalid");
+        return ResponseEntity.ok(new ArticleResponse(articleService.unfavorite(viewerId, slug)));
+    }
 }
