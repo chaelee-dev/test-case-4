@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-hover;
+  }
+  .btn-outline {
+    @apply btn border border-primary text-primary hover:bg-primary hover:text-white;
+  }
+  .btn-danger {
+    @apply btn bg-danger text-white;
+  }
+  .input {
+    @apply block w-full rounded border border-border px-3 py-2 text-base focus:border-primary focus:outline-none;
+  }
+  .card {
+    @apply border-b border-border py-4;
+  }
+  .tag-pill {
+    @apply inline-block rounded-full border border-border px-2 py-0.5 text-xs text-neutral-muted;
+  }
+  .tag-pill-active {
+    @apply tag-pill bg-secondary text-white;
+  }
+}
