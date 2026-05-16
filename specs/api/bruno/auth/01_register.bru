@@ -1,0 +1,27 @@
+meta {
+  name: 01_register
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/users
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "user": {
+      "username": "alice_{{$randomInt}}",
+      "email": "alice_{{$randomInt}}@example.com",
+      "password": "secret_password"
+    }
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.user.token: isString
+  res.body.user.username: isString
+}
