@@ -83,9 +83,9 @@ cp frontend/.env.prod.example frontend/.env.prod
 # VITE_API_BASE_URL을 profile별로 조정
 
 # 7) DB 스키마 적용 (dev profile, 최초 1회)
-#    옵션 A — Spring Boot가 부팅 시 ddl-auto=update + Flyway V1~V7 자동 적용
-#    옵션 B — 별도 적용:
-cd backend && ./gradlew flywayMigrate -Pflyway.configFiles=src/main/resources/application-dev.yml
+#    Spring Boot가 부팅 시 ddl-auto=update + Flyway V0~ 자동 적용
+#    별도 명령 불필요 — 아래 8)·9) bootRun 시 첫 부팅 로그에서
+#    `Flyway Community Edition ... by Redgate` + `Migrating schema "public" to version "X"` 확인
 
 # 8) seed 데이터 (옵션, dev)
 ./gradlew bootRun --args='--spring.profiles.active=dev --seed=true'
@@ -203,7 +203,7 @@ lsof -i :5432  # PostgreSQL
 
 - PostgreSQL 컨테이너 실행 여부: `docker compose ps`
 - profile별 DB URL 일치 여부: `backend/.env.{dev,stg,prod}` 안의 `DB_URL`
-- 스키마 미적용 (dev): Spring Boot 부팅 로그에서 `Hibernate: create table ...` 확인 또는 `./gradlew flywayMigrate -Pprofile=dev`
+- 스키마 미적용 (dev): Spring Boot 부팅 로그에서 `Hibernate: create table ...` 또는 `Flyway ... Migrating schema "public" to version "X"` 확인. 둘 다 없으면 `spring.jpa.hibernate.ddl-auto`와 `spring.flyway.enabled` 설정 점검
 - stg/prod 미적용: Flyway 자동 적용. 부팅 시 `Flyway Community Edition X.Y.Z by Redgate` + `Migrating schema "public" to version "X"` 로그 확인
 
 ### 5.4 monorepo cwd에서 `Could not resolve placeholder 'database.url'`
